@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صوت الحكاية AI | مكتبة الرعب اللامحدودة</title>
+    
+    <!-- Google Fonts & Tailwind -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: '#05080f',
+                        crimson: '#f43f5e',
+                        surface: '#0d121f',
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #05080f; color: #e2e8f0; }
+        .glass { background: rgba(13, 18, 31, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .loader-wave span { display: inline-block; width: 4px; height: 15px; background: #f43f5e; border-radius: 2px; animation: wave 1s infinite alternate; }
+        @keyframes wave { from { height: 5px; } to { height: 25px; } }
+        .skeleton { background: linear-gradient(90deg, #0d121f 25%, #1a2236 50%, #0d121f 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+        @keyframes loading { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #05080f; }
+        ::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 10px; }
+
+        .sound-active { color: #f43f5e; box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Header -->
+    <nav class="fixed top-0 w-full z-[100] glass px-6 py-4 flex justify-between items-center border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-crimson rounded-lg flex items-center justify-center shadow-lg shadow-crimson/20">
+                <i class="fas fa-ghost text-white"></i>
+            </div>
+            <span class="text-xl font-black text-white">صوت الحكاية <span class="text-crimson text-sm">AI</span></span>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- Sound Library Toggle -->
+            <div class="hidden md:flex items-center gap-2 bg-white/5 p-1 rounded-xl border border-white/10">
+                <button onclick="toggleAmbient('rain')" id="btn-rain" class="p-2 hover:text-crimson transition" title="صوت المطر"><i class="fas fa-cloud-showers-heavy"></i></button>
+                <button onclick="toggleAmbient('wind')" id="btn-wind" class="p-2 hover:text-crimson transition" title="صوت الرياح"><i class="fas fa-wind"></i></button>
+                <button onclick="toggleAmbient('heart')" id="btn-heart" class="p-2 hover:text-crimson transition" title="نبض القلب"><i class="fas fa-heartbeat"></i></button>
+            </div>
+            <button onclick="generateDailyStory()" class="bg-crimson/10 hover:bg-crimson text-crimson hover:text-white px-5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-crimson/20">
+                <i class="fas fa-bolt" id="sync-icon"></i> جلب قصص لا محدودة
+            </button>
+        </div>
+    </nav>
+
+    <main class="pt-28 px-6 max-w-7xl mx-auto pb-40">
+        <!-- AI Status Indicator -->
+        <div class="mb-8 flex items-center justify-between bg-white/5 border border-white/10 p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-green-500/10 px-3 py-1 rounded-full">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-[10px] text-green-500 font-bold uppercase tracking-wider">المصادر المجانية نشطة</span>
+                </div>
+                <p class="text-xs font-bold text-gray-400">نظام البحث الذكي يستكشف الآن أعمق ملفات الإنترنت...</p>
+            </div>
+            <div id="ai-loader" class="hidden loader-wave flex items-end gap-1">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section id="hero-section" class="relative rounded-[3rem] overflow-hidden mb-16 min-h-[550px] flex items-end p-8 md:p-16 border border-white/5 shadow-2xl">
+            <img id="hero-img" src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=1600" class="absolute inset-0 w-full h-full object-cover brightness-[0.2] transition duration-1000 scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/60 to-transparent"></div>
+            
+            <div class="relative z-10 max-w-3xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-crimson px-3 py-1 rounded text-[10px] font-black uppercase tracking-tighter shadow-lg shadow-crimson/40">رواية مختارة</span>
+                    <span id="hero-category" class="text-xs text-gray-400 font-bold"></span>
+                </div>
+                <h1 id="hero-title" class="text-4xl md:text-6xl font-black mb-6 leading-tight text-white">جاري تحضير ملف الرعب التالي...</h1>
+                <p id="hero-desc" class="text-gray-400 text-lg mb-8 line-clamp-3 leading-relaxed">بفضل الذكاء الاصطناعي، نقوم بالبحث في أرشيفات الجرائم العالمية لتقديم قصص لم تسمع بها من قبل.</p>
+                <div class="flex flex-wrap gap-4">
+                    <button id="read-hero-btn" onclick="speakText('hero-title', 'hero-desc')" class="bg-white text-midnight px-10 py-4 rounded-2xl font-black hover:bg-crimson hover:text-white transition shadow-xl flex items-center gap-3 active:scale-95">
+                        <i class="fas fa-play-circle text-2xl"></i> استمع للرواية (AI)
+                    </button>
+                    <button onclick="saveToLibrary('hero')" class="glass px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-white/10 transition">
+                        <i class="far fa-bookmark"></i> أضف لمكتبتي
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories & Filters -->
+        <div class="flex overflow-x-auto gap-4 mb-12 pb-4 scroll-hide">
+            <button class="bg-crimson text-white px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap">الكل</button>
+            <button class="glass px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-white/10">جرائم حقيقية</button>
+            <button class="glass px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-white/10">ظواهر خارقة</button>
+            <button class="glass px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-white/10">قصص رعب قصيرة</button>
+            <button class="glass px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-white/10">أساطير ريفية</button>
+        </div>
+
+        <!-- Dynamic Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="stories-container">
+            <div class="skeleton h-80 rounded-[2.5rem]"></div>
+            <div class="skeleton h-80 rounded-[2.5rem]"></div>
+            <div class="skeleton h-80 rounded-[2.5rem]"></div>
+        </div>
+    </main>
+
+    <!-- Ambient Audio Context (Free browser audio) -->
+    <audio id="audio-rain" loop src="https://www.soundjay.com/nature/rain-07.mp3"></audio>
+    <audio id="audio-wind" loop src="https://www.soundjay.com/nature/wind-01.mp3"></audio>
+    <audio id="audio-heart" loop src="https://www.soundjay.com/human/heartbeat-01.mp3"></audio>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 right-10 z-[400] transform translate-y-20 opacity-0 transition duration-500 glass px-6 py-4 rounded-2xl flex items-center gap-3 border border-crimson/30">
+        <i class="fas fa-check-circle text-green-500"></i>
+        <span id="toast-msg" class="text-sm font-bold">تم حفظ القصة في مكتبتك الخاصة!</span>
+    </div>
+
+    <script>
+        const apiKey = ""; 
+
+        // Sound Library Logic
+        function toggleAmbient(type) {
+            const audio = document.getElementById(`audio-${type}`);
+            const btn = document.getElementById(`btn-${type}`);
+            
+            if (audio.paused) {
+                audio.play();
+                btn.classList.add('sound-active');
+            } else {
+                audio.pause();
+                btn.classList.remove('sound-active');
+            }
+        }
+
+        // Speech Engine
+        let synthesis = window.speechSynthesis;
+        let isSpeaking = false;
+
+        function speakText(titleId, descId) {
+            if (isSpeaking) {
+                synthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('read-hero-btn').innerHTML = `<i class="fas fa-play-circle text-2xl"></i> استمع للرواية (AI)`;
+                return;
+            }
+
+            const title = document.getElementById(titleId).innerText;
+            const desc = document.getElementById(descId).innerText;
+            const utterance = new SpeechSynthesisUtterance(`${title}. ${desc}`);
+            
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.85; 
+            utterance.pitch = 0.7; 
+
+            utterance.onstart = () => {
+                isSpeaking = true;
+                document.getElementById('read-hero-btn').innerHTML = `<i class="fas fa-stop-circle text-2xl text-crimson"></i> إيقاف القراءة`;
+            };
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                document.getElementById('read-hero-btn').innerHTML = `<i class="fas fa-play-circle text-2xl"></i> استمع للرواية (AI)`;
+            };
+
+            synthesis.speak(utterance);
+        }
+
+        async function callGemini(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ "google_search": {} }],
+                generationConfig: { 
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            hero: {
+                                type: "OBJECT",
+                                properties: {
+                                    title: { type: "STRING" },
+                                    description: { type: "STRING" },
+                                    imagePrompt: { type: "STRING" },
+                                    category: { type: "STRING" }
+                                }
+                            },
+                            list: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        title: { type: "STRING" },
+                                        description: { type: "STRING" },
+                                        imagePrompt: { type: "STRING" },
+                                        category: { type: "STRING" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+                    const data = await response.json();
+                    return JSON.parse(data.candidates[0].content.parts[0].text);
+                } catch (e) {
+                    await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                }
+            }
+            throw new Error("Limit Reached");
+        }
+
+        async function generateDailyStory() {
+            const loader = document.getElementById('ai-loader');
+            const syncIcon = document.getElementById('sync-icon');
+            loader.classList.remove('hidden');
+            syncIcon.classList.add('animate-spin');
+
+            // Unlimited keywords for diversity
+            const topics = ["أرواح غاضبة", "جرائم مجهولة", "قصور مسكونة", "تجارب سرية", "اختفاء غامض", "غابات ملعونة"];
+            const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+
+            const prompt = `Find 4 unique and terrifying true horror stories or mysteries about '${randomTopic}' from global archives (2024-2025). 
+            Write a high-quality Arabic cinematic title and a very dramatic 3-paragraph narration for each. 
+            Include English image prompts. Ensure each story is different from previous ones.`;
+
+            try {
+                const data = await callGemini(prompt);
+                updateUI(data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                loader.classList.add('hidden');
+                syncIcon.classList.remove('animate-spin');
+            }
+        }
+
+        async function generateImage(promptText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({ instances: { prompt: promptText + " dark cinematic horror photography, spooky atmosphere, high definition" }, parameters: { sampleCount: 1 } })
+                });
+                const result = await response.json();
+                return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+            } catch (e) {
+                const keywords = promptText.split(' ').slice(0, 4).join(',');
+                return `https://source.unsplash.com/1600x900/?scary,mystery,${keywords}`;
+            }
+        }
+
+        async function updateUI(data) {
+            document.getElementById('hero-title').innerText = data.hero.title;
+            document.getElementById('hero-desc').innerText = data.hero.description;
+            document.getElementById('hero-category').innerText = data.hero.category;
+            const heroImg = await generateImage(data.hero.imagePrompt);
+            document.getElementById('hero-img').src = heroImg;
+
+            const container = document.getElementById('stories-container');
+            container.innerHTML = '';
+
+            for (const story of data.list) {
+                const storyImg = await generateImage(story.imagePrompt);
+                const card = `
+                    <div class="glass p-5 rounded-[2.5rem] group cursor-pointer hover:border-crimson/40 transition duration-500 flex flex-col h-full border border-white/5">
+                        <div class="relative aspect-[16/10] rounded-3xl overflow-hidden mb-6">
+                            <img src="${storyImg}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700 brightness-75 group-hover:brightness-100">
+                            <div class="absolute top-4 right-4 bg-crimson/90 backdrop-blur-md px-3 py-1 rounded-lg text-[10px] font-black text-white">${story.category}</div>
+                        </div>
+                        <h3 class="text-xl font-black mb-4 group-hover:text-crimson transition leading-tight">${story.title}</h3>
+                        <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed mb-6">${story.description}</p>
+                        <div class="mt-auto flex justify-between items-center pt-4 border-t border-white/5">
+                            <button onclick="speakTextDirect('${story.title}', '${story.description}')" class="text-[10px] font-bold text-gray-400 hover:text-white transition flex items-center gap-2">
+                                <i class="fas fa-headphones text-crimson"></i> استماع سريع
+                            </button>
+                            <i onclick="saveToLibrary('item')" class="far fa-heart text-gray-600 hover:text-crimson transition"></i>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            }
+        }
+
+        function speakTextDirect(title, desc) {
+            synthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(`${title}. ${desc}`);
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.9;
+            synthesis.speak(utterance);
+        }
+
+        function saveToLibrary(type) {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        window.onload = generateDailyStory;
+    </script>
+</body>
+</html>
