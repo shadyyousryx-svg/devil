@@ -2,249 +2,592 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story’s Shady | ستوري شادي - تحديث مباشر</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مطعم البركة - المنيو الذكي</title>
+    
+    <meta name="theme-color" content="#d32f2f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="مطعم البركة">
+    <meta name="application-name" content="مطعم البركة">
+
+    <link rel="icon" type="image/jpeg" href="https://i.ibb.co/bRzWVmPC/logo.jpg">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/bRzWVmPC/logo.jpg">
+    
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22%D9%85%D8%B7%D8%B9%D9%85%20%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%22%2C%22short_name%22%3A%22%D9%85%D8%B7%D8%B9%D9%85%20%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8f9fa%22%2C%22theme_color%22%3A%22%23d32f2f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.ibb.co%2FbRzWVmPC%2Flogo.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --bg-dark: #0a0a0a;
-            --accent-red: #8b0000;
-            --card-bg: #161616;
-            --text-gray: #b0b0b0;
+        :root { 
+            --main-red: #d32f2f; --main-yellow: #ffc107; 
+            --bg: #f8f9fa; --text: #2d3436; --card-bg: #ffffff;
+        }
+        [data-theme="dark"] {
+            --bg: #121212; --text: #ffffff; --card-bg: #1e1e1e;
+        }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; padding-bottom: 80px; }
+        
+        #home-page { 
+            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://i.ibb.co/HTWhBfwz/Untitled-Project-7.jpg');
+            background-size: cover; background-position: center; color: white; text-align: center; padding: 20px;
+        }
+        .home-logo { width: 140px; border-radius: 50%; border: 4px solid var(--main-yellow); margin-bottom: 15px; background:white; }
+        
+        .info-tag { display: block; background: var(--main-yellow); color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; }
+        .alert-tag { background: var(--main-red); color: white; border: 1px solid white; }
+
+        .start-btn { background: var(--main-red); color: white; border: none; padding: 15px 50px; font-size: 1.3rem; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); margin-top: 10px; }
+        .start-btn:disabled { background: #888; cursor: not-allowed; box-shadow: none; }
+        .start-btn:active { transform: scale(0.95); }
+
+        .header { background: var(--main-red); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .tabs { display: flex; overflow-x: auto; background: var(--card-bg); padding: 10px; gap: 8px; border-bottom: 1px solid #ddd; scroll-behavior: smooth; }
+        .tab { white-space: nowrap; padding: 8px 18px; border-radius: 20px; border: 1px solid var(--main-red); background: none; color: var(--main-red); font-weight: bold; cursor: pointer; }
+        .tab.active { background: var(--main-red); color: white; }
+
+        .item-card { display: flex; background: var(--card-bg); margin: 12px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; height: 110px; border: 1px solid #eee; }
+        .item-card img { width: 110px; height: 110px; object-fit: cover; }
+        .item-info { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .item-info h3 { margin: 0; font-size: 0.95rem; }
+        .price-tag { color: var(--main-red); font-weight: bold; margin-top: 5px; }
+
+        .page-content { display: none; padding-bottom: 120px; }
+        .opt-box { background: var(--card-bg); margin: 15px; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        select, input[type="text"], input[type="time"], textarea { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; font-family: 'Cairo'; box-sizing: border-box; background: var(--bg); color: var(--text); }
+
+        #custom-alert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--card-bg); border: 2px solid var(--main-red); padding: 20px; border-radius: 15px;
+            z-index: 2000; box-shadow: 0 0 20px rgba(0,0,0,0.5); width: 80%; max-width: 300px; text-align: center;
+        }
+        #alert-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1999;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: white;
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
-        }
+        .qty-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 10px; }
+        .qty-btn { background: var(--main-yellow); border: none; width: 40px; height: 40px; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
 
-        .mysterious-gradient {
-            background: linear-gradient(180deg, rgba(139, 0, 0, 0.4) 0%, rgba(10, 10, 10, 1) 100%);
-        }
-
-        .story-card {
-            background: var(--card-bg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #222;
-        }
-
-        .story-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(139, 0, 0, 0.4);
-            border-color: var(--accent-red);
-        }
-
-        .horror-font { font-family: 'Amiri', serif; }
-
-        .search-bar {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
-        }
-
-        .search-bar:focus-within {
-            border-color: var(--accent-red);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loader {
-            border: 3px solid #161616;
-            border-top: 3px solid var(--accent-red);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .footer { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 2px solid var(--main-red); z-index: 1000; }
+        .nav-bar { display: flex; justify-content: space-around; padding: 10px; background: rgba(0,0,0,0.02); }
+        .nav-item { border: none; background: none; color: var(--text); font-family: 'Cairo'; font-size: 0.8rem; cursor: pointer; font-weight: bold; position: relative; }
+        .cart-count { position: absolute; top: -8px; right: -15px; background: var(--main-yellow); color: #000; padding: 2px 7px; border-radius: 50%; font-size: 0.75rem; font-weight: bold; }
+        
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .c-btn { text-decoration: none; color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .c-btn.red { background: var(--main-red); }
+        .c-btn.insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .c-btn.fb { background: #1877F2; }
+        .c-btn.call { background: #2d3436; }
+        
+        .radio-label { display: flex; align-items: center; cursor: pointer; font-weight: bold; }
+        .radio-label input { margin-left: 5px; transform: scale(1.1); margin-top: 0; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-    <!-- Header -->
-    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-lg border-b border-white/5 py-4 px-6 md:px-12 flex justify-between items-center">
-        <div class="text-2xl font-bold tracking-tighter horror-font text-red-700">STORY'S SHADY</div>
-        <div class="hidden md:flex flex-1 mx-12">
-            <div class="search-bar flex items-center w-full max-w-xl px-4 py-2 rounded-full">
-                <input type="text" id="youtubeSearch" placeholder="ابحث عن قصة، قناة، أو سلسلة رعب..." class="bg-transparent border-none outline-none text-sm w-full text-white px-2">
-                <button onclick="performSearch()" class="text-gray-400 hover:text-red-600">🔍</button>
-            </div>
+<div id="alert-overlay"></div>
+<div id="custom-alert">
+    <p id="alert-text" style="font-weight: bold; margin-bottom: 20px;"></p>
+    <button onclick="closeAlert()" style="background: var(--main-red); color: white; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer;">حسناً</button>
+</div>
+
+<div id="home-page">
+    <img src="https://i.ibb.co/bRzWVmPC/logo.jpg" class="home-logo" alt="مطعم البركة">
+    <h1 style="margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">مطعم البركة 🍗</h1>
+    
+    <div class="info-tag alert-tag">الطلبات حضور و استلام فقط</div>
+    <button class="start-btn" id="start-btn" onclick="goToMenu()" disabled>جاري تحضير القائمة ⏳...</button>
+    <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">📍 الخوض | الخوير</div>
+</div>
+
+<div id="menu-page" class="page-content">
+    <div class="header">
+        <button onclick="goToHome()" style="background:none; border:none; color:white; font-size:1.5rem;">🏠</button>
+        <span style="font-weight:bold">قائمة الطعام</span>
+        <span></span>
+    </div>
+    <div class="tabs" id="cat-tabs"></div>
+    <div id="items-list"></div>
+</div>
+
+<div id="options-page" class="page-content">
+    <div class="header">
+        <button onclick="backToCurrentCategory()" style="background:none; border:none; color:white;">⬅️ رجوع</button>
+        <span id="item-title-head">تخصيص الوجبة</span>
+        <span></span>
+    </div>
+    <div id="options-render"></div>
+    <div class="opt-box">
+        <label style="text-align: center; display: block; font-weight: bold;">🔢 العدد المطلوب:</label>
+        <div class="qty-controls">
+            <button class="qty-btn" onclick="changeOptQty(-1)">-</button>
+            <span id="opt-qty-val" style="font-size: 1.2rem; font-weight: bold;">1</span>
+            <button class="qty-btn" onclick="changeOptQty(1)">+</button>
         </div>
-        <div class="flex items-center gap-4">
-            <span id="liveStatus" class="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase tracking-widest">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> مباشر
-            </span>
+    </div>
+    <div style="padding: 15px;">
+        <button class="start-btn" style="width:100%" onclick="addItemToCart()">إضافة إلى السلة 🛒</button>
+    </div>
+</div>
+
+<div id="cart-page" class="page-content">
+    <div class="header">
+        <span>سلة الطلبات</span>
+        <button onclick="backToCurrentCategory()" style="background:none; border:none; color:white; font-weight:bold;">+ إضافة صنف</button>
+    </div>
+
+    <div class="opt-box" style="background: #ffebee; border-color: var(--main-red); text-align: center; padding: 10px;">
+        <span style="color: var(--main-red); font-weight: bold; font-size: 0.9rem;">⚠️ الطلب للحضور والاستلام من الفرع فقط.</span>
+    </div>
+    
+    <div class="opt-box" style="padding: 12px;">
+        <label style="color:var(--main-red); font-weight:bold; font-size: 0.9rem;">👤 اسم العميل:</label>
+        <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم..." style="border: 2px solid var(--main-red); font-weight:bold; padding: 8px;">
+    </div>
+
+    <div class="opt-box" style="padding: 12px;">
+        <label id="branch-label" style="color:var(--main-red); font-weight:bold; font-size: 0.9rem;">📍 اختر فرع الاستلام:</label>
+        <select id="branch-select" style="border: 2px solid var(--main-red); font-weight:bold; padding: 8px;">
+            <option value="">-- اضغط هنا لاختيار الفرع --</option>
+            <option value="فرع الخوض - شارع البركات">فرع الخوض - شارع البركات</option>
+            <option value="فرع الخوير - شارع سوق الخوير">فرع الخوير - شارع سوق الخوير</option>
+        </select>
+    </div>
+
+    <div class="opt-box" id="time-selection-box" style="padding: 12px;">
+        <label style="color:var(--main-red); font-weight:bold; font-size: 0.9rem; margin-bottom: 8px; display: block;">🕒 متى ترغب في استلام الطلب؟</label>
+        
+        <div style="display: flex; gap: 15px; background: var(--bg); padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+            <label class="radio-label" style="font-size: 0.85rem; margin:0;">
+                <input type="radio" name="pickup-time-type" value="asap" checked onchange="toggleTimeInput()"> 
+                أقرب وقت (<span id="asap-time-span">20</span> د)
+            </label>
+            <label class="radio-label" style="font-size: 0.85rem; margin:0;">
+                <input type="radio" name="pickup-time-type" value="scheduled" onchange="toggleTimeInput()"> 
+                تحديد وقت
+            </label>
         </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <header class="h-[50vh] flex flex-col justify-center items-center text-center px-4 mysterious-gradient pt-20">
-        <h1 class="text-5xl md:text-7xl font-bold horror-font mb-4 opacity-90">راديو الظلال المباشر</h1>
-        <p class="text-gray-300 max-w-2xl text-lg mb-8 italic italic">يتم الآن جلب أحدث القصص من قنواتك المفضلة تلقائياً.</p>
-    </header>
-
-    <!-- Content Section -->
-    <section class="py-12 px-6 md:px-12 bg-black min-h-screen">
-        <div class="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-            <h2 id="sectionTitle" class="text-xl font-bold horror-font">أحدث الإضافات التلقائية</h2>
-            <div class="flex gap-4 text-xs">
-                <button onclick="loadChannelVideos('UC_x5XG1OV2P6uMlxSJIH5bg')" class="hover:text-red-500 transition">الديبو</button>
-                <button onclick="loadChannelVideos('UC-D8S9S8p5m9Gf1-x8Kj_Yg')" class="hover:text-red-500 transition">مستر كايرو</button>
-                <button onclick="loadChannelVideos('UC_M6b6S7S-8SJIH5bg')" class="hover:text-red-500 transition">أساطير</button>
-            </div>
-        </div>
-
-        <!-- Loading Indicator -->
-        <div id="loading" class="hidden flex justify-center py-20">
-            <div class="loader"></div>
-        </div>
-
-        <!-- Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="mainGrid">
-            <!-- Videos will be injected here -->
-        </div>
-    </section>
-
-    <!-- Player Modal -->
-    <div id="playerModal" class="modal">
-        <div class="bg-zinc-950 border border-red-900/30 w-full max-w-5xl rounded-xl overflow-hidden relative flex flex-col h-[90vh] md:h-auto">
-            <button onclick="closePlayer()" class="absolute top-4 right-4 text-white hover:text-red-600 text-3xl z-50 bg-black/50 rounded-full w-10 h-10 flex items-center justify-center transition">&times;</button>
-            <div id="videoContainer" class="aspect-video bg-black"></div>
-            <div class="p-6">
-                <h3 id="modalTitle" class="text-xl font-bold mb-2 text-red-600"></h3>
-                <p id="modalChannel" class="text-xs text-gray-500 mb-4"></p>
-                <p id="modalDesc" class="text-gray-400 text-sm line-clamp-3"></p>
-            </div>
+        <div id="scheduled-time-container" style="display: none; margin-top: 10px; animation: fadeIn 0.3s ease;">
+            <label style="font-size: 0.75rem; color: #666; display: block; margin-bottom: 5px;">* الأوقات المتاحة للاستلام (بدءاً من 15 دقيقة):</label>
+            <select id="scheduled-time-select" style="border: 2px solid var(--main-red); font-weight:bold; padding: 8px; font-size: 0.9rem; border-radius: 6px; color: var(--main-red);">
+            </select>
         </div>
     </div>
 
-    <script>
-        // ملاحظة: في النسخة الواقعية ستحتاج لمفتاح API من Google Cloud
-        // هنا سنقوم بمحاكاة الطلبات المباشرة لليوتيوب
-        const apiKey = ''; // اتركها فارغة، البيئة ستوفرها عند التشغيل أو نستخدم بديل للمحاكاة
+    <div class="opt-box" style="padding: 12px;">
+        <label style="color:var(--text); font-weight:bold; font-size: 0.9rem;">🚗 ملاحظات إضافية للاستلام (اختياري):</label>
+        <textarea id="pickup-notes" placeholder="اكتب هنا رقم السيارة أو اللون لتسهيل تسليم الطلب لك..." style="border: 1px solid #ddd; padding: 8px; font-size: 0.85rem; height: 60px;"></textarea>
+    </div>
 
-        async function fetchFromYouTube(endpoint, params) {
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('mainGrid').innerHTML = '';
+    <div id="cart-display"></div>
+
+    <div class="opt-box" style="text-align: center;">
+        <h3>الإجمالي النهائي: <span id="total-val" style="color:var(--main-red);">0.000</span> ر.ع</h3>
+        <button class="start-btn" style="width:100%; background:#25D366; font-size:1.1rem;" onclick="submitOrder()">إرسال الطلب (واتساب) 💬</button>
+    </div>
+    
+    <div class="contact-grid">
+        <a href="tel:99876514" class="c-btn call" id="call-btn-1">📞 99876514</a>
+        <a href="tel:90664108" class="c-btn call" id="call-btn-2">📞 90664108</a>
+        <a href="https://maps.app.goo.gl/5ZAGoYCSfwv2YurZ6" class="c-btn red" id="loc-btn-1">📍 موقع الخوض</a>
+        <a href="https://maps.app.goo.gl/XpQSv5umViVYo7jX7" class="c-btn red" id="loc-btn-2">📍 موقع الخوير</a>
+        <a href="https://www.instagram.com/elbarakafriedchicken.oman/" target="_blank" class="c-btn insta" id="insta-btn">📸 إنستجرام</a>
+        <a href="https://www.facebook.com/profile.php?id=61564286235956" target="_blank" class="c-btn fb" id="fb-btn">📘 فيسبوك</a>
+    </div>
+</div>
+
+<div class="footer" id="footer-nav" style="display:none">
+    <div class="nav-bar">
+        <button class="nav-item" onclick="backToCurrentCategory()">🍴 المنيو</button>
+        <button class="nav-item" onclick="goToCart()">
+            🛒 السلة <span class="cart-count" id="c-count">0</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_mLvfHoHl4JY7Njpl7mfVL1gXbhg_tBbGyi-NWLacXPmRmPornWAg7bqDBGdNya2Ky_haLSvuBD6j/pub?output=csv";
+    
+    let deliveryTime = "20"; 
+    let whatsappNumber = "96892018510";
+    let callNumber1 = "99876514";
+    let callNumber2 = "90664108";
+    let instaLink = "https://www.instagram.com/elbarakafriedchicken.oman/";
+    let fbLink = "https://www.facebook.com/profile.php?id=61564286235956";
+    let locationLink1 = "https://maps.app.goo.gl/5ZAGoYCSfwv2YurZ6";
+    let locationLink2 = "https://maps.app.goo.gl/XpQSv5umViVYo7jX7";
+
+    const saucesUI = `
+        <option value="صوص رانش">صوص رانش</option>
+        <option value="صوص باربيكو">صوص باربيكو</option>
+        <option value="صوص كوكتيل">صوص كوكتيل</option>
+        <option value="صوص حار">صوص حار</option>
+        <option value="صوص سويت شيلي">صوص سويت شيلي</option>
+        <option value="صوص ثوميه">صوص ثوميه</option>
+        <option value="حلقات هالبينو">حلقات هالبينو</option>
+    `;
+    
+    const drinksUI = `
+        <option value="السي كولا">السي كولا</option>
+        <option value="السي تفاح">السي تفاح</option>
+        <option value="السي كولا دايت">السي كولا دايت</option>
+        <option value="السي ليمون">السي ليمون</option>
+        <option value="السي ستريم">السي ستريم</option>
+        <option value="السي برتقال">السي برتقال</option>
+        <option value="السي حمضيات">السي حمضيات</option>
+    `;
+
+    let menuData = {};
+    let cart = [];
+    let selectedItem = null;
+    let currentOptQty = 1;
+    let currentCategory = ""; 
+
+    function showAlert(text) {
+        document.getElementById('alert-text').innerText = text;
+        document.getElementById('alert-overlay').style.display = 'block';
+        document.getElementById('custom-alert').style.display = 'block';
+    }
+    function closeAlert() {
+        document.getElementById('alert-overlay').style.display = 'none';
+        document.getElementById('custom-alert').style.display = 'none';
+    }
+
+    function generateTimeOptions() {
+        const select = document.getElementById('scheduled-time-select');
+        select.innerHTML = '';
+        const now = new Date();
+        let currentMins = now.getHours() * 60 + now.getMinutes();
+        let startMins = Math.ceil((currentMins + 15) / 15) * 15; 
+        
+        for(let i = 0; i < 16; i++) { 
+            let m = startMins + (i * 15);
+            let hours = Math.floor(m / 60) % 24;
+            let mins = m % 60;
+            let ampm = hours >= 12 ? 'مساءً' : 'صباحاً';
+            let h12 = hours % 12 || 12;
+            let formattedMins = mins < 10 ? '0' + mins : mins;
+            let timeStr = `${h12}:${formattedMins} ${ampm}`;
+            select.innerHTML += `<option value="${timeStr}">${timeStr}</option>`;
+        }
+    }
+
+    function toggleTimeInput() {
+        const type = document.querySelector('input[name="pickup-time-type"]:checked').value;
+        const container = document.getElementById('scheduled-time-container');
+        if (type === 'scheduled') {
+            container.style.display = 'block';
+            generateTimeOptions();
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    async function fetchMenuData() {
+        try {
+            const response = await fetch(csvUrl);
+            const csvText = await response.text();
+            const rows = csvText.split('\n').map(r => r.trim()).filter(r => r);
             
-            // في البيئة الحقيقية نستخدم: https://www.googleapis.com/youtube/v3/...
-            // هنا سنقوم بمحاكاة البحث لضمان عمل الكود فوراً
-            try {
-                // محاكاة تأخير الشبكة
-                await new Promise(r => setTimeout(r, 800));
+            for(let i = 1; i < rows.length; i++) {
+                const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                if(cols.length < 3) continue;
+
+                let cat = cols[0];
+                let name = cols[1];
+                let valueRaw = cols[2];
+                let priceRaw = valueRaw.replace(/[^\d.]/g, '');
+                let price = parseFloat(priceRaw) || 0;
+
+                if (cat === "الاعدادات") {
+                    if (name === "رقم الواتساب") whatsappNumber = valueRaw;
+                    if (name === "رقم الاتصال 1") callNumber1 = valueRaw;
+                    if (name === "رقم الاتصال 2") callNumber2 = valueRaw;
+                    if (name === "رابط انستجرام") instaLink = valueRaw;
+                    if (name === "رابط فيسبوك") fbLink = valueRaw;
+                    if (name === "رابط موقع الخوض") locationLink1 = valueRaw;
+                    if (name === "رابط موقع الخوير") locationLink2 = valueRaw;
+                    continue;
+                }
+
+                if (name === "وقت التوصيل") {
+                    deliveryTime = priceRaw; 
+                    const asapSpan = document.getElementById('asap-time-span');
+                    if(asapSpan) asapSpan.innerText = deliveryTime;
+                    continue;
+                }
+
+                if (cat === "جبن اضافي") continue;
+
+                const mergedCats = ["مشروبات", "باكت شيبس", "كومبو", "مياه", "خبز", "إضافات", "صوصات"];
+                if (mergedCats.includes(cat)) {
+                    cat = "اضافات وجبات";
+                }
                 
-                // هذه بيانات تجريبية "ديناميكية" تحاكي ما يرجعه يوتيوب
-                return mockYouTubeData(params.q || params.channelId);
-            } catch (e) {
-                console.error("خطأ في جلب البيانات", e);
-            } finally {
-                document.getElementById('loading').classList.add('hidden');
+                let img = cols[3] ? cols[3].replace(/[\[\]]/g, '') : '';
+                if(name.includes("قطعة استريبس")) {
+                    img = "https://i.ibb.co/Vph8WY44/mmw-638669571739251392.webp";
+                }
+
+                let flv = cols[4] === 'نعم';
+                let s = parseInt(cols[5]) || 0;
+                let d = parseInt(cols[6]) || 0;
+
+                if(name.includes("صوصات متنوعة")) s = Math.max(s, 1);
+                if(name.includes("كومبو") || name.includes("مشروبات غازية")) d = Math.max(d, 1); 
+
+                if(!menuData[cat]) menuData[cat] = [];
+                menuData[cat].push({ id: i, name, price, img, flv, s, d, catOrigin: cat });
+            }
+
+            document.getElementById('call-btn-1').href = 'tel:' + callNumber1;
+            document.getElementById('call-btn-1').innerHTML = '📞 ' + callNumber1;
+            document.getElementById('call-btn-2').href = 'tel:' + callNumber2;
+            document.getElementById('call-btn-2').innerHTML = '📞 ' + callNumber2;
+            document.getElementById('insta-btn').href = instaLink;
+            document.getElementById('fb-btn').href = fbLink;
+            document.getElementById('loc-btn-1').href = locationLink1;
+            document.getElementById('loc-btn-2').href = locationLink2;
+
+            const btn = document.getElementById('start-btn');
+            btn.innerText = "اطلب الآن 🍗";
+            btn.disabled = false;
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    function showPage(id) {
+        document.querySelectorAll('.page-content, #home-page').forEach(p => p.style.display = 'none');
+        document.getElementById(id).style.display = id === 'home-page' ? 'flex' : 'block';
+    }
+
+    function goToHome() { showPage('home-page'); document.getElementById('footer-nav').style.display='none'; }
+    
+    function goToMenu() { 
+        showPage('menu-page'); 
+        document.getElementById('footer-nav').style.display='block';
+        renderTabs();
+        if(!currentCategory) currentCategory = Object.keys(menuData)[0];
+        showCategory(currentCategory);
+    }
+
+    function backToCurrentCategory() {
+        showPage('menu-page');
+        document.getElementById('footer-nav').style.display='block';
+        renderTabs();
+        showCategory(currentCategory);
+    }
+
+    function renderTabs() {
+        const tabs = document.getElementById('cat-tabs');
+        tabs.innerHTML = '';
+        Object.keys(menuData).forEach((cat) => {
+            const isActive = cat === currentCategory;
+            tabs.innerHTML += `<button class="tab ${isActive ? 'active' : ''}" onclick="showCategory('${cat}', this)">${cat}</button>`;
+        });
+        setTimeout(() => {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }, 100);
+    }
+
+    function showCategory(cat, btn = null) {
+        currentCategory = cat; 
+        if(btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        const list = document.getElementById('items-list');
+        list.innerHTML = '';
+        if(menuData[cat]) {
+            menuData[cat].forEach(item => {
+                list.innerHTML += `
+                    <div class="item-card" onclick='initOptions(${JSON.stringify(item)})'>
+                        <img src="${item.img || 'https://via.placeholder.com/110?text=Baraka'}" onerror="this.src='https://via.placeholder.com/110?text=Baraka'">
+                        <div class="item-info">
+                            <h3>${item.name}</h3>
+                            <span class="price-tag">${item.price.toFixed(3)} ر.ع</span>
+                        </div>
+                    </div>`;
+            });
+        }
+    }
+
+    function initOptions(item) {
+        selectedItem = item;
+        currentOptQty = 1;
+        document.getElementById('opt-qty-val').innerText = currentOptQty;
+        showPage('options-page');
+        document.getElementById('item-title-head').innerText = item.name;
+        
+        let html = `<div class="opt-box"><h3>السعر: ${item.price.toFixed(3)} ر.ع</h3></div>`;
+        if(item.flv) html += `<div class="opt-box"><label>🌶️ اختر الطعم:</label><select id="sel-flv"><option>عادي</option><option>حار</option></select></div>`;
+        
+        if(item.name.includes("توستر") || item.name.includes("تربل توستر")) {
+            html += `<div class="opt-box" style="border-color:var(--main-yellow)">
+                <label>🧀 إضافة جبن اختياري (حتى 3 شرائح):</label>
+                <select id="sel-cheese">
+                    <option value="0">بدون إضافة</option>
+                    <option value="0.100">إضافة شريحة جبن (+0.100 ر.ع)</option>
+                    <option value="0.200">إضافة شريحتين جبن (+0.200 ر.ع)</option>
+                    <option value="0.300">إضافة 3 شرائح جبن (+0.300 ر.ع)</option>
+                </select>
+            </div>`;
+        }
+
+        if(item.d > 0) {
+            for(let i=1; i<=item.d; i++) {
+                html += `<div class="opt-box">
+                    <label>🥤 اختر المشروب الغازي ${item.d > 1 ? i : ''}:</label>
+                    <select class="sel-drink">${drinksUI}</select>
+                </div>`;
             }
         }
 
-        function mockYouTubeData(query) {
-            // محاكاة لنتائج بحث متنوعة
-            const titles = [
-                `سلسلة ${query || 'رعب'} - الجزء الأول`,
-                `قصة حقيقية من أرشيف ${query || 'الغموض'}`,
-                `تحقيق في واقعة ${query || 'مخيفة'}`,
-                `مذكرات ${query || 'خادم الجن'} - حلقة جديدة`,
-                `لغز ${query || 'الاختفاء'} الغامض`
-            ];
-            
-            return Array.from({length: 8}, (_, i) => ({
-                id: { videoId: `video_${Math.random().toString(36).substr(2, 9)}` },
-                snippet: {
-                    title: titles[i % titles.length],
-                    description: "هذه القصة تم جلبها تلقائياً من يوتيوب بناءً على بحثك أو تحديثات القنوات...",
-                    thumbnails: { high: { url: `https://picsum.photos/seed/${i + Math.random()}/400/225` } },
-                    channelTitle: query && query.length < 20 ? query : "قناة رعب موثقة"
-                }
-            }));
+        if(item.s > 0) {
+            for(let i=1; i<=item.s; i++) {
+                html += `<div class="opt-box">
+                    <label>🧂 اختر الصوص ${item.s > 1 ? i : ''}:</label>
+                    <select class="sel-sauce">${saucesUI}</select>
+                </div>`;
+            }
+        }
+        
+        html += `<div class="opt-box"><label>📝 ملاحظات إضافية:</label><textarea id="sel-note" placeholder="مثلاً: بدون خس، كتشب زيادة..."></textarea></div>`;
+        document.getElementById('options-render').innerHTML = html;
+    }
+
+    function changeOptQty(change) {
+        currentOptQty += change;
+        if(currentOptQty < 1) currentOptQty = 1;
+        document.getElementById('opt-qty-val').innerText = currentOptQty;
+    }
+
+    function addItemToCart() {
+        const cheeseSelect = document.getElementById('sel-cheese');
+        const cheesePrice = cheeseSelect ? parseFloat(cheeseSelect.value) : 0;
+        const cheeseText = cheeseSelect && cheesePrice > 0 ? cheeseSelect.options[cheeseSelect.selectedIndex].text : '';
+
+        const finalItemPrice = selectedItem.price + cheesePrice;
+
+        const entry = {
+            name: selectedItem.name,
+            qty: currentOptQty,
+            unitPrice: finalItemPrice,
+            totalPrice: finalItemPrice * currentOptQty,
+            flv: document.getElementById('sel-flv')?.value || '',
+            cheeseInfo: cheeseText,
+            sauces: Array.from(document.querySelectorAll('.sel-sauce')).map(s => s.value),
+            drinks: Array.from(document.querySelectorAll('.sel-drink')).map(d => d.value),
+            note: document.getElementById('sel-note').value
+        };
+        cart.push(entry);
+        document.getElementById('c-count').innerText = cart.length;
+        backToCurrentCategory();
+    }
+
+    function goToCart() {
+        showPage('cart-page');
+        if(document.querySelector('input[name="pickup-time-type"]:checked').value === 'scheduled') {
+            generateTimeOptions();
         }
 
-        async function performSearch() {
-            const query = document.getElementById('youtubeSearch').value;
-            if(!query) return;
-            
-            document.getElementById('sectionTitle').innerText = `نتائج البحث عن: ${query}`;
-            const results = await fetchFromYouTube('search', { q: query + " قصة رعب" });
-            renderVideos(results);
-        }
-
-        async function loadChannelVideos(channelId) {
-            document.getElementById('sectionTitle').innerText = `أحدث فيديوهات القناة`;
-            const results = await fetchFromYouTube('search', { channelId: channelId });
-            renderVideos(results);
-        }
-
-        function renderVideos(videos) {
-            const grid = document.getElementById('mainGrid');
-            grid.innerHTML = '';
-            
-            videos.forEach(v => {
-                const card = `
-                    <div class="story-card rounded-lg overflow-hidden group cursor-pointer" onclick="openPlayer('${v.id.videoId}', '${v.snippet.title.replace(/'/g, "\\'")}', '${v.snippet.channelTitle}', '${v.snippet.description.replace(/'/g, "\\'")}')">
-                        <div class="relative aspect-video">
-                            <img src="${v.snippet.thumbnails.high.url}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition"></div>
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                <span class="bg-red-700 p-3 rounded-full">▶</span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-sm line-clamp-2 mb-2 group-hover:text-red-500 transition">${v.snippet.title}</h3>
-                            <div class="flex justify-between items-center text-[10px] text-gray-500">
-                                <span>${v.snippet.channelTitle}</span>
-                                <span class="text-red-900 font-bold">LIVE UPDATE</span>
-                            </div>
-                        </div>
+        const display = document.getElementById('cart-display');
+        display.innerHTML = '';
+        let total = 0;
+        cart.forEach((item, idx) => {
+            total += item.totalPrice;
+            display.innerHTML += `
+                <div class="opt-box" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="flex:1;">
+                        <strong style="font-size:1.1rem">${item.name} <span style="color:var(--main-red)">(×${item.qty})</span></strong><br>
+                        <small style="color:#666">
+                            ${item.flv ? `الطعم: ${item.flv} | ` : ''}
+                            ${item.cheeseInfo ? `<br>🧀 ${item.cheeseInfo}` : ''}
+                            ${item.sauces.length ? `<br>🧂 صوص: ${item.sauces.join('، ')}` : ''}
+                            ${item.drinks.length ? `<br>🥤 مشروب: ${item.drinks.join('، ')}` : ''}
+                            ${item.note ? `<br>📝 ملاحظة: ${item.note}` : ''}
+                        </small>
+                        <div style="font-weight:bold; margin-top:5px; color:var(--main-red)">${item.totalPrice.toFixed(3)} ر.ع</div>
                     </div>
-                `;
-                grid.innerHTML += card;
-            });
-        }
-
-        function openPlayer(id, title, channel, desc) {
-            const modal = document.getElementById('playerModal');
-            document.getElementById('videoContainer').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalChannel').innerText = channel;
-            document.getElementById('modalDesc').innerText = desc;
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePlayer() {
-            document.getElementById('playerModal').style.display = 'none';
-            document.getElementById('videoContainer').innerHTML = '';
-            document.body.style.overflow = 'auto';
-        }
-
-        // البحث عند الضغط على Enter
-        document.getElementById('youtubeSearch').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
+                    <button onclick="remove(${idx})" style="color:red; border:none; background:none; font-size:1.5rem; cursor:pointer; padding:10px;">🗑️</button>
+                </div>`;
         });
+        document.getElementById('total-val').innerText = total.toFixed(3);
+    }
 
-        // التحميل الأولي
-        window.onload = () => loadChannelVideos('default');
-    </script>
+    function remove(i) { cart.splice(i, 1); goToCart(); document.getElementById('c-count').innerText = cart.length; }
+
+    function submitOrder() {
+        if(!cart.length) {
+            showAlert("سلة الطلبات فارغة، يرجى اختيار وجبات أولاً.");
+            return;
+        }
+        
+        const custName = document.getElementById('customer-name').value.trim();
+        if(!custName) {
+            showAlert("يرجى كتابة اسم العميل أولاً.");
+            document.getElementById('customer-name').focus();
+            return;
+        }
+
+        const branch = document.getElementById('branch-select').value;
+        if(!branch) {
+            showAlert("يرجى اختيار فرع الاستلام أولاً (الخوض أو الخوير).");
+            document.getElementById('branch-select').focus();
+            return;
+        }
+
+        let finalPickupTimeText = `في أقرب وقت (خلال ${deliveryTime} دقيقة)`;
+        const timeType = document.querySelector('input[name="pickup-time-type"]:checked').value;
+        
+        if (timeType === 'scheduled') {
+            const timeVal = document.getElementById('scheduled-time-select').value;
+            if (!timeVal) {
+                showAlert("يرجى اختيار الوقت المرجو للاستلام من القائمة.");
+                return;
+            }
+            finalPickupTimeText = `الساعة ${timeVal} (مجدول مسبقاً)`;
+        }
+
+        const pNotes = document.getElementById('pickup-notes').value.trim();
+
+        const confirmMsg = `عزيزي ${custName}، سيتم إرسال طلبك الآن إلى ${branch} (استلام من الفرع). اضغط حسناً للمتابعة.`;
+        showAlert(confirmMsg);
+
+        setTimeout(() => {
+            let text = `*طلب جديد - مطعم البركة 🍗*\n`;
+            text += `🔴 *الطلب للحضور والاستلام من الفرع فقط*\n`;
+            text += `👤 *اسم العميل: ${custName}*\n`;
+            text += `📍 فرع الاستلام: ${branch}\n`;
+            text += `⏱️ وقت الاستلام: *${finalPickupTimeText}*\n`;
+            if(pNotes) text += `🚗 *ملاحظات الاستلام: ${pNotes}*\n`;
+            text += `\n`;
+            
+            cart.forEach(i => {
+                text += `▪️ *${i.name}* (العدد: ${i.qty})\n`;
+                if(i.flv) text += `    - الطعم: ${i.flv}\n`;
+                if(i.cheeseInfo) text += `    - الجبن: ${i.cheeseInfo}\n`;
+                if(i.sauces.length) text += `    - صوص: ${i.sauces.join('، ')}\n`;
+                if(i.drinks.length) text += `    - مشروب: ${i.drinks.join('، ')}\n`;
+                if(i.note) text += `    - ملاحظة: ${i.note}\n`;
+                text += `    - السعر: ${i.totalPrice.toFixed(3)} ر.ع\n\n`;
+            });
+            text += `====================\n💰 *الإجمالي النهائي: ${document.getElementById('total-val').innerText} ر.ع*\n====================`;
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`);
+        }, 1500);
+    }
+
+    fetchMenuData();
+</script>
 </body>
 </html>
-
