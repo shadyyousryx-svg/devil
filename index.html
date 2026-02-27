@@ -314,13 +314,14 @@
                     if (name === "رابط فيسبوك") fbLink = valueRaw;
                     if (name === "رابط موقع الخوض") locationLink1 = valueRaw;
                     if (name === "رابط موقع الخوير") locationLink2 = valueRaw;
-                    continue;
-                }
-
-                if (name === "وقت التوصيل") {
-                    deliveryTime = priceRaw; 
-                    const asapSpan = document.getElementById('asap-time-span');
-                    if(asapSpan) asapSpan.innerText = deliveryTime;
+                    
+                    // استخراج وقت الاستلام (كأرقام فقط)
+                    if (name === "وقت الاستلام" || name === "وقت التوصيل") {
+                        deliveryTime = valueRaw.replace(/[^\d]/g, ''); 
+                        if(!deliveryTime) deliveryTime = "20"; // رقم افتراضي
+                        const asapSpan = document.getElementById('asap-time-span');
+                        if(asapSpan) asapSpan.innerText = deliveryTime;
+                    }
                     continue;
                 }
 
