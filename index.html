@@ -8,666 +8,827 @@
     <meta name="theme-color" content="#d32f2f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="مطعم البركة">
-    <meta name="application-name" content="مطعم البركة">
+    
+    <!-- ربط ملف التثبيت PWA -->
+    <link rel="manifest" href="manifest.json">
 
     <link rel="icon" type="image/jpeg" href="https://i.ibb.co/bRzWVmPC/logo.jpg">
     <link rel="apple-touch-icon" href="https://i.ibb.co/bRzWVmPC/logo.jpg">
-    
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22%D9%85%D8%B7%D8%B9%D9%85%20%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%22%2C%22short_name%22%3A%22%D9%85%D8%B7%D8%B9%D9%85%20%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8f9fa%22%2C%22theme_color%22%3A%22%23d32f2f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.ibb.co%2FbRzWVmPC%2Flogo.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D">
 
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons (For modern UI icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Cairo', 'sans-serif'] },
+                    colors: {
+                        primary: '#d32f2f', // Main Red
+                        secondary: '#ffc107', // Yellow
+                        darkBg: '#121212',
+                        darkCard: '#1e1e1e'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root { 
-            --main-red: #d32f2f; --main-yellow: #ffc107; 
-            --bg: #f8f9fa; --text: #2d3436; --card-bg: #ffffff;
-        }
-        [data-theme="dark"] {
-            --bg: #121212; --text: #ffffff; --card-bg: #1e1e1e;
-        }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; padding-bottom: 80px; }
+        /* Custom Scrollbars & Utilities */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
         
-        #home-page { 
-            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://i.ibb.co/HTWhBfwz/Untitled-Project-7.jpg');
-            background-size: cover; background-position: center; color: white; text-align: center; padding: 20px;
-        }
-        .home-logo { width: 140px; border-radius: 50%; border: 4px solid var(--main-yellow); margin-bottom: 15px; background:white; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .info-tag { display: block; background: var(--main-yellow); color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; }
-        .alert-tag { background: var(--main-red); color: white; border: 1px solid white; transition: background 0.3s; }
-
-        .start-btn { background: var(--main-red); color: white; border: none; padding: 15px 50px; font-size: 1.3rem; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); margin-top: 10px; }
-        .start-btn:disabled { background: #555; cursor: not-allowed; box-shadow: none; opacity: 0.9; }
-        .start-btn:active:not(:disabled) { transform: scale(0.95); }
-
-        .header { background: var(--main-red); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .tabs { display: flex; overflow-x: auto; background: var(--card-bg); padding: 10px; gap: 8px; border-bottom: 1px solid #ddd; scroll-behavior: smooth; }
-        .tab { white-space: nowrap; padding: 8px 18px; border-radius: 20px; border: 1px solid var(--main-red); background: none; color: var(--main-red); font-weight: bold; cursor: pointer; }
-        .tab.active { background: var(--main-red); color: white; }
-
-        .item-card { display: flex; background: var(--card-bg); margin: 12px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; height: 110px; border: 1px solid #eee; }
-        .item-card img { width: 110px; height: 110px; object-fit: cover; }
-        .item-info { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .item-info h3 { margin: 0; font-size: 0.95rem; }
-        .price-tag { color: var(--main-red); font-weight: bold; margin-top: 5px; }
-
-        .page-content { display: none; padding-bottom: 120px; }
-        .opt-box { background: var(--card-bg); margin: 15px; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        select, input[type="text"], input[type="time"], textarea { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; font-family: 'Cairo'; box-sizing: border-box; background: var(--bg); color: var(--text); }
-
-        #custom-alert {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--card-bg); border: 2px solid var(--main-red); padding: 20px; border-radius: 15px;
-            z-index: 2000; box-shadow: 0 0 20px rgba(0,0,0,0.5); width: 80%; max-width: 300px; text-align: center;
-        }
-        #alert-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1999;
+        /* Glassmorphism effects */
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .dark .glass-nav { background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(10px); }
+        
+        /* Splash Screen BG */
+        .splash-bg {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://i.ibb.co/HTWhBfwz/Untitled-Project-7.jpg');
+            background-size: cover; background-position: center;
         }
 
-        .qty-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 10px; }
-        .qty-btn { background: var(--main-yellow); border: none; width: 40px; height: 40px; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
-
-        .footer { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 2px solid var(--main-red); z-index: 1000; }
-        .nav-bar { display: flex; justify-content: space-around; padding: 10px; background: rgba(0,0,0,0.02); }
-        .nav-item { border: none; background: none; color: var(--text); font-family: 'Cairo'; font-size: 0.8rem; cursor: pointer; font-weight: bold; position: relative; }
-        .cart-count { position: absolute; top: -8px; right: -15px; background: var(--main-yellow); color: #000; padding: 2px 7px; border-radius: 50%; font-size: 0.75rem; font-weight: bold; }
+        /* Animations */
+        .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; transform: translateY(15px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
         
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .c-btn { text-decoration: none; color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .c-btn.red { background: var(--main-red); }
-        .c-btn.insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-        .c-btn.fb { background: #1877F2; }
-        .c-btn.call { background: #2d3436; }
-        
-        .radio-label { display: flex; align-items: center; cursor: pointer; font-weight: bold; }
-        .radio-label input { margin-left: 5px; transform: scale(1.1); margin-top: 0; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        /* Drawer/Modal Transition */
+        .drawer-overlay { transition: opacity 0.3s ease; }
+        .drawer-content { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 antialiased transition-colors duration-300">
 
-<div id="alert-overlay"></div>
-<div id="custom-alert">
-    <p id="alert-text" style="font-weight: bold; margin-bottom: 20px; line-height: 1.6;"></p>
-    <button onclick="closeAlert()" style="background: var(--main-red); color: white; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;">حسناً</button>
-</div>
-
-<div id="home-page">
-    <img src="https://i.ibb.co/bRzWVmPC/logo.jpg" class="home-logo" alt="مطعم البركة">
-    <h1 style="margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">مطعم البركة 🍗</h1>
-    
-    <div class="info-tag alert-tag" id="status-tag">جاري التحقق من حالة المطعم ⏳...</div>
-    <button class="start-btn" id="start-btn" onclick="goToMenu()" disabled>جاري تحضير القائمة ⏳...</button>
-    <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">📍 الخوض | الخوير</div>
-</div>
-
-<div id="menu-page" class="page-content">
-    <div class="header">
-        <button onclick="goToHome()" style="background:none; border:none; color:white; font-size:1.5rem;">🏠</button>
-        <span style="font-weight:bold">قائمة الطعام</span>
-        <span></span>
-    </div>
-    <div class="tabs" id="cat-tabs"></div>
-    <div id="items-list"></div>
-</div>
-
-<div id="options-page" class="page-content">
-    <div class="header">
-        <button onclick="backToCurrentCategory()" style="background:none; border:none; color:white;">⬅️ رجوع</button>
-        <span id="item-title-head">تخصيص الوجبة</span>
-        <span></span>
-    </div>
-    <div id="options-render"></div>
-    <div class="opt-box">
-        <label style="text-align: center; display: block; font-weight: bold;">🔢 العدد المطلوب:</label>
-        <div class="qty-controls">
-            <button class="qty-btn" onclick="changeOptQty(-1)">-</button>
-            <span id="opt-qty-val" style="font-size: 1.2rem; font-weight: bold;">1</span>
-            <button class="qty-btn" onclick="changeOptQty(1)">+</button>
+    <!-- 1. Splash / Home Screen -->
+    <div id="splash-screen" class="fixed inset-0 z-[100] splash-bg flex flex-col items-center justify-center text-white transition-opacity duration-500">
+        <div class="animate-bounce mb-6">
+            <img src="https://i.ibb.co/bRzWVmPC/logo.jpg" class="w-32 h-32 rounded-full border-4 border-secondary object-cover shadow-2xl bg-white">
         </div>
-    </div>
-    <div style="padding: 15px;">
-        <button class="start-btn" style="width:100%" onclick="addItemToCart()">إضافة إلى السلة 🛒</button>
-    </div>
-</div>
-
-<div id="cart-page" class="page-content">
-    <div class="header">
-        <span>سلة الطلبات</span>
-        <button onclick="backToCurrentCategory()" style="background:none; border:none; color:white; font-weight:bold;">+ إضافة صنف</button>
-    </div>
-
-    <div class="opt-box" style="background: #ffebee; border-color: var(--main-red); text-align: center; padding: 10px;">
-        <span style="color: var(--main-red); font-weight: bold; font-size: 0.9rem;">⚠️ الطلب للحضور والاستلام من الفرع فقط.</span>
-    </div>
-    
-    <div class="opt-box" style="padding: 12px;">
-        <label style="color:var(--main-red); font-weight:bold; font-size: 0.9rem;">👤 اسم العميل:</label>
-        <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم..." style="border: 2px solid var(--main-red); font-weight:bold; padding: 8px;">
-    </div>
-
-    <div class="opt-box" style="padding: 12px;">
-        <label id="branch-label" style="color:var(--main-red); font-weight:bold; font-size: 0.9rem;">📍 اختر فرع الاستلام:</label>
-        <select id="branch-select" style="border: 2px solid var(--main-red); font-weight:bold; padding: 8px;">
-            <option value="">-- اضغط هنا لاختيار الفرع --</option>
-            <option value="فرع الخوض - شارع البركات">فرع الخوض - شارع البركات</option>
-            <option value="فرع الخوير - شارع سوق الخوير">فرع الخوير - شارع سوق الخوير</option>
-        </select>
-    </div>
-
-    <div class="opt-box" id="time-selection-box" style="padding: 12px;">
-        <label style="color:var(--main-red); font-weight:bold; font-size: 0.9rem; margin-bottom: 8px; display: block;">🕒 متى ترغب في استلام الطلب؟</label>
+        <h1 class="text-4xl font-bold mb-2 text-shadow-lg">مطعم البركة</h1>
+        <p class="text-gray-300 text-sm mb-8">📍 الخوض | الخوير</p>
         
-        <div style="display: flex; gap: 15px; background: var(--bg); padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
-            <label class="radio-label" style="font-size: 0.85rem; margin:0;">
-                <input type="radio" name="pickup-time-type" value="asap" checked onchange="toggleTimeInput()"> 
-                أقرب وقت (<span id="asap-time-span">20</span> د)
-            </label>
-            <label class="radio-label" style="font-size: 0.85rem; margin:0;">
-                <input type="radio" name="pickup-time-type" value="scheduled" onchange="toggleTimeInput()"> 
-                تحديد وقت
-            </label>
+        <div id="status-tag" class="bg-secondary text-black px-6 py-2 rounded-full font-bold text-sm mb-6 animate-pulse">
+            جاري تهيئة المنيو ⏳...
         </div>
-
-        <div id="scheduled-time-container" style="display: none; margin-top: 10px; animation: fadeIn 0.3s ease;">
-            <label style="font-size: 0.75rem; color: #666; display: block; margin-bottom: 5px;">* الأوقات المتاحة للاستلام (بدءاً من 15 دقيقة):</label>
-            <select id="scheduled-time-select" style="border: 2px solid var(--main-red); font-weight:bold; padding: 8px; font-size: 0.9rem; border-radius: 6px; color: var(--main-red);">
-            </select>
-        </div>
-    </div>
-
-    <div class="opt-box" style="padding: 12px;">
-        <label style="color:var(--text); font-weight:bold; font-size: 0.9rem;">🚗 ملاحظات إضافية للاستلام (اختياري):</label>
-        <textarea id="pickup-notes" placeholder="اكتب هنا رقم السيارة أو اللون لتسهيل تسليم الطلب لك..." style="border: 1px solid #ddd; padding: 8px; font-size: 0.85rem; height: 60px;"></textarea>
-    </div>
-
-    <div id="cart-display"></div>
-
-    <div class="opt-box" style="text-align: center;">
-        <h3>الإجمالي النهائي: <span id="total-val" style="color:var(--main-red);">0.000</span> ر.ع</h3>
-        <button class="start-btn" style="width:100%; background:#25D366; font-size:1.1rem;" onclick="submitOrder()">إرسال الطلب (واتساب) 💬</button>
-    </div>
-    
-    <div class="contact-grid">
-        <a href="tel:99876514" class="c-btn call" id="call-btn-1">📞 99876514</a>
-        <a href="tel:90664108" class="c-btn call" id="call-btn-2">📞 90664108</a>
-        <a href="https://maps.app.goo.gl/5ZAGoYCSfwv2YurZ6" class="c-btn red" id="loc-btn-1">📍 موقع الخوض</a>
-        <a href="https://maps.app.goo.gl/XpQSv5umViVYo7jX7" class="c-btn red" id="loc-btn-2">📍 موقع الخوير</a>
-        <a href="https://www.instagram.com/elbarakafriedchicken.oman/" target="_blank" class="c-btn insta" id="insta-btn">📸 إنستجرام</a>
-        <a href="https://www.facebook.com/profile.php?id=61564286235956" target="_blank" class="c-btn fb" id="fb-btn">📘 فيسبوك</a>
-    </div>
-</div>
-
-<div class="footer" id="footer-nav" style="display:none">
-    <div class="nav-bar">
-        <button class="nav-item" onclick="backToCurrentCategory()">🍴 المنيو</button>
-        <button class="nav-item" onclick="goToCart()">
-            🛒 السلة <span class="cart-count" id="c-count">0</span>
+        
+        <button id="start-btn" onclick="startApp()" disabled class="bg-primary hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-10 py-4 rounded-full font-bold text-lg shadow-[0_0_15px_rgba(211,47,47,0.5)] transition-all transform active:scale-95 flex items-center gap-2">
+            <i class="ph ph-spinner-gap animate-spin text-xl hidden" id="loading-icon"></i>
+            <span id="start-text">يرجى الانتظار...</span>
         </button>
     </div>
-</div>
 
-<script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_mLvfHoHl4JY7Njpl7mfVL1gXbhg_tBbGyi-NWLacXPmRmPornWAg7bqDBGdNya2Ky_haLSvuBD6j/pub?output=csv";
-    
-    // متغيرات الإعدادات
-    let deliveryTime = "20"; 
-    let whatsappNumber = "96892018510";
-    let callNumber1 = "99876514";
-    let callNumber2 = "90664108";
-    let instaLink = "https://www.instagram.com/elbarakafriedchicken.oman/";
-    let fbLink = "https://www.facebook.com/profile.php?id=61564286235956";
-    let locationLink1 = "https://maps.app.goo.gl/5ZAGoYCSfwv2YurZ6";
-    let locationLink2 = "https://maps.app.goo.gl/XpQSv5umViVYo7jX7";
-    
-    // متغيرات أوقات العمل
-    let openingTime = "00:00"; // القيمة الافتراضية إذا لم تكن موجودة بالشيت
-    let closingTime = "23:59"; // القيمة الافتراضية إذا لم تكن موجودة بالشيت
-
-    const saucesUI = `
-        <option value="صوص رانش">صوص رانش</option>
-        <option value="صوص باربيكو">صوص باربيكو</option>
-        <option value="صوص كوكتيل">صوص كوكتيل</option>
-        <option value="صوص حار">صوص حار</option>
-        <option value="صوص سويت شيلي">صوص سويت شيلي</option>
-        <option value="صوص ثوميه">صوص ثوميه</option>
-        <option value="حلقات هالبينو">حلقات هالبينو</option>
-    `;
-    
-    const drinksUI = `
-        <option value="السي كولا">السي كولا</option>
-        <option value="السي تفاح">السي تفاح</option>
-        <option value="السي كولا دايت">السي كولا دايت</option>
-        <option value="السي ليمون">السي ليمون</option>
-        <option value="السي ستريم">السي ستريم</option>
-        <option value="السي برتقال">السي برتقال</option>
-        <option value="السي حمضيات">السي حمضيات</option>
-    `;
-
-    let menuData = {};
-    let cart = [];
-    let selectedItem = null;
-    let currentOptQty = 1;
-    let currentCategory = ""; 
-
-    function showAlert(text) {
-        document.getElementById('alert-text').innerText = text;
-        document.getElementById('alert-overlay').style.display = 'block';
-        document.getElementById('custom-alert').style.display = 'block';
-    }
-    function closeAlert() {
-        document.getElementById('alert-overlay').style.display = 'none';
-        document.getElementById('custom-alert').style.display = 'none';
-    }
-
-    // دالة التحقق من مواعيد العمل
-    function isRestaurantOpen() {
-        if (!openingTime || !closingTime) return true; // كإجراء احتياطي إذا لم يتم وضعها في الشيت
-
-        const now = new Date();
-        const currentH = now.getHours();
-        const currentM = now.getMinutes();
-        const currentTotal = currentH * 60 + currentM;
-
-        try {
-            const [openH, openM] = openingTime.split(':').map(Number);
-            const openTotal = openH * 60 + openM;
-
-            const [closeH, closeM] = closingTime.split(':').map(Number);
-            const closeTotal = closeH * 60 + closeM;
-
-            // إذا كان موعد الإغلاق في نفس اليوم (مثلاً يفتح 10 صباحاً ويغلق 11 مساءً)
-            if (openTotal < closeTotal) {
-                return currentTotal >= openTotal && currentTotal <= closeTotal;
-            } 
-            // إذا كان موعد الإغلاق في اليوم التالي (مثلاً يفتح 6 مساءً ويغلق 2 فجراً)
-            else {
-                return currentTotal >= openTotal || currentTotal <= closeTotal;
-            }
-        } catch (error) {
-            console.error("خطأ في قراءة صيغة الوقت، يجب أن تكون HH:MM", error);
-            return true; // نفتح المطعم احتياطياً في حال أخطأ العميل في كتابة الوقت في الإكسل
-        }
-    }
-
-    function formatTimeAMPM(time24) {
-        const [h, m] = time24.split(':');
-        let hours = parseInt(h);
-        const ampm = hours >= 12 ? 'م' : 'ص';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // الساعة 0 تصبح 12
-        return `${hours}:${m} ${ampm}`;
-    }
-
-    function generateTimeOptions() {
-        const select = document.getElementById('scheduled-time-select');
-        select.innerHTML = '';
-        const now = new Date();
-        let currentMins = now.getHours() * 60 + now.getMinutes();
-        let startMins = Math.ceil((currentMins + 15) / 15) * 15; 
+    <!-- 2. Main App Content (Hidden initially) -->
+    <div id="main-app" class="hidden pb-24">
         
-        for(let i = 0; i < 16; i++) { 
-            let m = startMins + (i * 15);
-            let hours = Math.floor(m / 60) % 24;
-            let mins = m % 60;
-            let ampm = hours >= 12 ? 'مساءً' : 'صباحاً';
-            let h12 = hours % 12 || 12;
-            let formattedMins = mins < 10 ? '0' + mins : mins;
-            let timeStr = `${h12}:${formattedMins} ${ampm}`;
-            select.innerHTML += `<option value="${timeStr}">${timeStr}</option>`;
-        }
-    }
+        <!-- Header & Nav -->
+        <header class="sticky top-0 z-40 glass-nav border-b border-gray-200 dark:border-gray-800 shadow-sm">
+            <div class="px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="https://i.ibb.co/bRzWVmPC/logo.jpg" class="w-10 h-10 rounded-full border-2 border-primary object-cover">
+                    <div>
+                        <h2 class="font-bold text-lg leading-tight dark:text-white">البركة</h2>
+                        <span class="text-[10px] text-primary font-bold bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded-full">استلام فقط</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleDarkMode()" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition">
+                        <i class="ph ph-moon text-xl dark:hidden"></i>
+                        <i class="ph ph-sun text-xl hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
 
-    function toggleTimeInput() {
-        const type = document.querySelector('input[name="pickup-time-type"]:checked').value;
-        const container = document.getElementById('scheduled-time-container');
-        if (type === 'scheduled') {
-            container.style.display = 'block';
-            generateTimeOptions();
-        } else {
-            container.style.display = 'none';
-        }
-    }
+            <!-- Search Bar -->
+            <div class="px-4 pb-3">
+                <div class="relative">
+                    <input type="text" id="searchInput" oninput="filterMenu()" placeholder="ابحث عن وجبتك المفضلة..." 
+                        class="w-full bg-gray-100 dark:bg-gray-800 border-none rounded-2xl py-3 pr-11 pl-4 text-sm focus:ring-2 focus:ring-primary dark:text-white transition">
+                    <i class="ph ph-magnifying-glass absolute right-4 top-3.5 text-gray-400 text-lg"></i>
+                </div>
+            </div>
 
-    async function fetchMenuData() {
-        try {
-            const response = await fetch(csvUrl);
-            const csvText = await response.text();
-            const rows = csvText.split('\n').map(r => r.trim()).filter(r => r);
+            <!-- Categories Tabs -->
+            <div class="flex overflow-x-auto hide-scrollbar gap-2 px-4 pb-3" id="cat-tabs">
+                <!-- Injected via JS -->
+            </div>
+        </header>
+
+        <!-- Menu Grid -->
+        <main class="p-4">
+            <div id="items-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Items injected via JS -->
+            </div>
             
-            for(let i = 1; i < rows.length; i++) {
-                const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-                if(cols.length < 3) continue;
+            <!-- Empty State for Search -->
+            <div id="empty-search" class="hidden flex-col items-center justify-center py-12 text-gray-400">
+                <i class="ph ph-magnifying-glass text-5xl mb-3 opacity-50"></i>
+                <p class="font-bold">لم نجد ما تبحث عنه!</p>
+            </div>
+        </main>
+    </div>
 
-                let cat = cols[0];
-                let name = cols[1];
-                let valueRaw = cols[2];
-                let priceRaw = valueRaw.replace(/[^\d.]/g, '');
-                let price = parseFloat(priceRaw) || 0;
+    <!-- 3. Floating Cart Button (Bottom) -->
+    <div id="fab-cart" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 hidden transition-transform duration-300">
+        <button onclick="openCart()" class="bg-primary text-white px-6 py-3.5 rounded-full shadow-xl shadow-red-500/30 font-bold flex items-center gap-3 hover:bg-red-700 transition active:scale-95">
+            <div class="relative">
+                <i class="ph ph-shopping-cart text-2xl"></i>
+                <span id="fab-count" class="absolute -top-2 -right-2 bg-secondary text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-black border-2 border-primary border-solid">0</span>
+            </div>
+            <span>عـرض السلة</span>
+            <span class="text-red-200 text-sm">|</span>
+            <span id="fab-total" class="font-black text-secondary">0.000 ر.ع</span>
+        </button>
+    </div>
 
-                if (cat === "الاعدادات") {
-                    if (name === "رقم الواتساب") whatsappNumber = valueRaw;
-                    if (name === "رقم الاتصال 1") callNumber1 = valueRaw;
-                    if (name === "رقم الاتصال 2") callNumber2 = valueRaw;
-                    if (name === "رابط انستجرام") instaLink = valueRaw;
-                    if (name === "رابط فيسبوك") fbLink = valueRaw;
-                    if (name === "رابط موقع الخوض") locationLink1 = valueRaw;
-                    if (name === "رابط موقع الخوير") locationLink2 = valueRaw;
-                    if (name === "وقت الفتح") openingTime = valueRaw.trim();
-                    if (name === "وقت الغلق") closingTime = valueRaw.trim();
+    <!-- 4. Item Options Modal (Bottom Sheet) -->
+    <div id="item-modal" class="fixed inset-0 z-50 hidden">
+        <div class="drawer-overlay absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0" onclick="closeItemModal()"></div>
+        <div class="drawer-content absolute bottom-0 left-0 right-0 bg-white dark:bg-darkCard rounded-t-3xl translate-y-full opacity-0 max-h-[90vh] flex flex-col shadow-2xl sm:max-w-md sm:mx-auto">
+            
+            <div class="flex justify-between items-center p-5 border-b border-gray-100 dark:border-gray-800">
+                <h3 id="modal-title" class="font-bold text-lg dark:text-white">تخصيص الوجبة</h3>
+                <button onclick="closeItemModal()" class="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto hide-scrollbar flex-1 space-y-5" id="options-render">
+                <!-- Options injected here -->
+            </div>
+            
+            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-darkCard/80">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-white dark:bg-gray-800 rounded-xl p-1 border border-gray-200 dark:border-gray-700">
+                        <button onclick="changeOptQty(-1)" class="w-10 h-10 flex items-center justify-center text-lg font-bold text-gray-600 dark:text-gray-300">-</button>
+                        <span id="opt-qty-val" class="w-8 text-center font-bold text-lg dark:text-white">1</span>
+                        <button onclick="changeOptQty(1)" class="w-10 h-10 flex items-center justify-center text-lg font-bold text-primary">+</button>
+                    </div>
+                    <button onclick="addItemToCart()" class="flex-1 bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
+                        <span>إضافة</span>
+                        <span class="text-sm opacity-80">| <span id="modal-price-total">0.000</span> ر.ع</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Cart & Checkout Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 hidden">
+        <div class="drawer-overlay absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0" onclick="closeCart()"></div>
+        <div class="drawer-content absolute top-0 bottom-0 left-0 w-full sm:max-w-md bg-white dark:bg-darkCard -translate-x-full opacity-0 flex flex-col shadow-2xl">
+            
+            <div class="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800 bg-primary text-white">
+                <h2 class="font-bold text-lg flex items-center gap-2"><i class="ph ph-shopping-bag"></i> سلة الطلبات</h2>
+                <button onclick="closeCart()" class="text-white/80 hover:text-white"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-darkBg">
+                <!-- Info Alert -->
+                <div class="bg-red-50 dark:bg-red-900/20 border border-primary/30 rounded-xl p-3 mb-5 flex gap-3 text-sm">
+                    <i class="ph ph-info text-primary text-lg flex-shrink-0 mt-0.5"></i>
+                    <p class="text-primary dark:text-red-400 font-semibold">هذا الطلب مخصص للحضور والاستلام من الفرع فقط.</p>
+                </div>
+
+                <!-- Cart Items -->
+                <div id="cart-display" class="space-y-3 mb-6">
+                    <!-- Items -->
+                </div>
+
+                <!-- Checkout Form -->
+                <div id="checkout-form" class="space-y-4 bg-white dark:bg-darkCard p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hidden">
+                    <h3 class="font-bold text-gray-800 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">بيانات الاستلام</h3>
                     
-                    if (name === "وقت الاستلام" || name === "وقت التوصيل") {
-                        deliveryTime = valueRaw.replace(/[^\d]/g, ''); 
-                        if(!deliveryTime) deliveryTime = "20"; 
-                        const asapSpan = document.getElementById('asap-time-span');
-                        if(asapSpan) asapSpan.innerText = deliveryTime;
-                    }
-                    continue;
-                }
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">الاسم الكريم</label>
+                        <input type="text" id="customer-name" placeholder="أدخل اسمك" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary dark:text-white outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">فرع الاستلام</label>
+                        <select id="branch-select" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary dark:text-white outline-none">
+                            <option value="">اختر الفرع...</option>
+                            <option value="فرع الخوض - شارع البركات">الخوض - شارع البركات</option>
+                            <option value="فرع الخوير - شارع سوق الخوير">الخوير - سوق الخوير</option>
+                        </select>
+                    </div>
 
-                if (cat === "جبن اضافي") continue;
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">وقت الاستلام</label>
+                        <div class="flex gap-2 bg-gray-50 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700">
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="pickup-time-type" value="asap" checked onchange="toggleTimeInput()" class="peer sr-only">
+                                <div class="py-1.5 text-xs font-bold rounded-lg text-gray-500 peer-checked:bg-white dark:peer-checked:bg-darkCard peer-checked:text-primary peer-checked:shadow-sm transition">أقرب وقت (<span id="asap-time-span">20</span>د)</div>
+                            </label>
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="pickup-time-type" value="scheduled" onchange="toggleTimeInput()" class="peer sr-only">
+                                <div class="py-1.5 text-xs font-bold rounded-lg text-gray-500 peer-checked:bg-white dark:peer-checked:bg-darkCard peer-checked:text-primary peer-checked:shadow-sm transition">تحديد وقت</div>
+                            </label>
+                        </div>
+                        <select id="scheduled-time-select" class="w-full mt-2 bg-white dark:bg-darkBg border border-primary text-primary rounded-xl px-3 py-2 text-sm hidden font-bold outline-none"></select>
+                    </div>
 
-                const mergedCats = ["مشروبات", "باكت شيبس", "كومبو", "مياه", "خبز", "إضافات", "صوصات"];
-                if (mergedCats.includes(cat)) {
-                    cat = "اضافات وجبات";
-                }
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">ملاحظات (رقم/لون السيارة)</label>
+                        <textarea id="pickup-notes" rows="2" placeholder="اختياري..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-primary dark:text-white outline-none resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-white dark:bg-darkCard border-t border-gray-200 dark:border-gray-800 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-500 font-bold text-sm">الإجمالي المطلوب:</span>
+                    <span class="text-2xl font-black text-primary"><span id="total-val">0.000</span> ر.ع</span>
+                </div>
+                <button id="btn-submit-order" onclick="submitOrder()" disabled class="w-full bg-[#25D366] disabled:bg-gray-400 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
+                    <i class="ph ph-whatsapp-logo text-2xl"></i> إرسال الطلب واتساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts Container -->
+    <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[70] flex flex-col gap-2 pointer-events-none w-[90%] sm:w-auto text-center"></div>
+
+    <script>
+        // --- Configuration & Variables ---
+        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_mLvfHoHl4JY7Njpl7mfVL1gXbhg_tBbGyi-NWLacXPmRmPornWAg7bqDBGdNya2Ky_haLSvuBD6j/pub?output=csv";
+        
+        let deliveryTime = "20"; 
+        let whatsappNumber = "96892018510";
+        let openingTime = "00:00"; 
+        let closingTime = "23:59"; 
+
+        const saucesUI = `
+            <option value="صوص رانش">صوص رانش</option>
+            <option value="صوص باربيكو">صوص باربيكو</option>
+            <option value="صوص كوكتيل">صوص كوكتيل</option>
+            <option value="صوص حار">صوص حار</option>
+            <option value="صوص سويت شيلي">صوص سويت شيلي</option>
+            <option value="صوص ثوميه">صوص ثوميه</option>
+            <option value="حلقات هالبينو">حلقات هالبينو</option>
+        `;
+        
+        const drinksUI = `
+            <option value="السي كولا">السي كولا</option>
+            <option value="السي تفاح">السي تفاح</option>
+            <option value="السي كولا دايت">السي كولا دايت</option>
+            <option value="السي ليمون">السي ليمون</option>
+            <option value="السي ستريم">السي ستريم</option>
+            <option value="السي برتقال">السي برتقال</option>
+            <option value="السي حمضيات">السي حمضيات</option>
+        `;
+
+        let menuData = {};
+        let allItemsFlat = []; // For search
+        let cart = [];
+        let selectedItem = null;
+        let currentOptQty = 1;
+        let currentCategory = ""; 
+
+        // --- Core Functions ---
+        
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bg = type === 'success' ? 'bg-gray-900 dark:bg-white text-white dark:text-black' : 'bg-red-500 text-white';
+            toast.className = `${bg} px-4 py-3 rounded-xl shadow-lg font-bold text-sm transform transition-all duration-300 translate-y-10 opacity-0 flex items-center justify-center gap-2`;
+            toast.innerHTML = type === 'success' ? `<i class="ph ph-check-circle text-lg text-green-400 dark:text-green-600"></i> ${msg}` : `<i class="ph ph-warning-circle text-lg"></i> ${msg}`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        // Init theme
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        function isRestaurantOpen() {
+            if (!openingTime || !closingTime) return true;
+            
+            // ضبط التوقيت ليكون بتوقيت سلطنة عمان (مسقط)
+            const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Muscat"}));
+            const currentTotal = now.getHours() * 60 + now.getMinutes();
+            try {
+                const [oH, oM] = openingTime.split(':').map(Number);
+                const [cH, cM] = closingTime.split(':').map(Number);
+                const oTot = oH * 60 + oM, cTot = cH * 60 + cM;
+                if (oTot < cTot) return currentTotal >= oTot && currentTotal <= cTot;
+                else return currentTotal >= oTot || currentTotal <= cTot;
+            } catch (e) { return true; }
+        }
+
+        function formatTimeAMPM(time24) {
+            const [h, m] = time24.split(':');
+            let hours = parseInt(h);
+            const ampm = hours >= 12 ? 'م' : 'ص';
+            hours = hours % 12 || 12;
+            return `${hours}:${m} ${ampm}`;
+        }
+
+        async function fetchMenuData() {
+            try {
+                const response = await fetch(csvUrl);
+                const csvText = await response.text();
+                const rows = csvText.split('\n').map(r => r.trim()).filter(r => r);
                 
-                let img = cols[3] ? cols[3].replace(/[\[\]]/g, '') : '';
-                if(name.includes("قطعة استريبس")) {
-                    img = "https://i.ibb.co/Vph8WY44/mmw-638669571739251392.webp";
+                for(let i = 1; i < rows.length; i++) {
+                    const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                    if(cols.length < 3) continue;
+
+                    let cat = cols[0];
+                    let name = cols[1];
+                    let price = parseFloat(cols[2].replace(/[^\d.]/g, '')) || 0;
+
+                    if (cat === "الاعدادات") {
+                        if (name === "رقم الواتساب") whatsappNumber = cols[2];
+                        if (name === "وقت الفتح") openingTime = cols[2].trim();
+                        if (name === "وقت الغلق") closingTime = cols[2].trim();
+                        if (name === "وقت الاستلام" || name === "وقت التوصيل") {
+                            deliveryTime = cols[2].replace(/[^\d]/g, '') || "20"; 
+                            document.getElementById('asap-time-span').innerText = deliveryTime;
+                        }
+                        continue;
+                    }
+
+                    if (cat === "جبن اضافي") continue;
+
+                    const mergedCats = ["مشروبات", "باكت شيبس", "كومبو", "مياه", "خبز", "إضافات", "صوصات"];
+                    if (mergedCats.includes(cat)) cat = "اضافات وجبات";
+                    
+                    let img = cols[3] ? cols[3].replace(/[\[\]]/g, '') : '';
+                    if(name.includes("قطعة استريبس")) img = "https://i.ibb.co/Vph8WY44/mmw-638669571739251392.webp";
+
+                    let flv = cols[4] === 'نعم';
+                    let s = parseInt(cols[5]) || 0;
+                    let d = parseInt(cols[6]) || 0;
+
+                    if(name.includes("صوصات متنوعة")) s = Math.max(s, 1);
+                    if(name.includes("كومبو") || name.includes("مشروبات غازية")) d = Math.max(d, 1); 
+
+                    const itemObj = { id: i, name, price, img, flv, s, d, catOrigin: cat };
+                    
+                    if(!menuData[cat]) menuData[cat] = [];
+                    menuData[cat].push(itemObj);
+                    allItemsFlat.push(itemObj);
                 }
 
-                let flv = cols[4] === 'نعم';
-                let s = parseInt(cols[5]) || 0;
-                let d = parseInt(cols[6]) || 0;
+                setupStartButton();
 
-                if(name.includes("صوصات متنوعة")) s = Math.max(s, 1);
-                if(name.includes("كومبو") || name.includes("مشروبات غازية")) d = Math.max(d, 1); 
-
-                if(!menuData[cat]) menuData[cat] = [];
-                menuData[cat].push({ id: i, name, price, img, flv, s, d, catOrigin: cat });
+            } catch(e) {
+                console.error(e);
+                document.getElementById('status-tag').innerText = "حدث خطأ في تحميل البيانات.";
+                document.getElementById('status-tag').className = "bg-red-500 text-white px-6 py-2 rounded-full font-bold text-sm mb-6";
             }
+        }
 
-            document.getElementById('call-btn-1').href = 'tel:' + callNumber1;
-            document.getElementById('call-btn-1').innerHTML = '📞 ' + callNumber1;
-            document.getElementById('call-btn-2').href = 'tel:' + callNumber2;
-            document.getElementById('call-btn-2').innerHTML = '📞 ' + callNumber2;
-            document.getElementById('insta-btn').href = instaLink;
-            document.getElementById('fb-btn').href = fbLink;
-            document.getElementById('loc-btn-1').href = locationLink1;
-            document.getElementById('loc-btn-2').href = locationLink2;
-
+        function setupStartButton() {
             const btn = document.getElementById('start-btn');
             const statusTag = document.getElementById('status-tag');
+            const startText = document.getElementById('start-text');
+            const loadIcon = document.getElementById('loading-icon');
             
-            // تطبيق فحص أوقات العمل
+            statusTag.classList.remove('animate-pulse');
+            
             if (isRestaurantOpen()) {
-                btn.innerText = "اطلب الآن 🍗";
+                startText.innerText = "تصفح المنيو 🍗";
                 btn.disabled = false;
-                statusTag.innerText = "الطلبات حضور واستلام فقط";
-                statusTag.style.background = "#25D366"; // أخضر عند الفتح
+                statusTag.innerText = "مفتوح - طلبات استلام فقط";
+                statusTag.className = "bg-green-500 text-white px-6 py-2 rounded-full font-bold text-sm mb-6";
             } else {
-                btn.innerText = "المطعم مغلق حالياً 🚫";
+                startText.innerText = "المطعم مغلق";
                 btn.disabled = true;
                 const openAMPM = formatTimeAMPM(openingTime);
                 const closeAMPM = formatTimeAMPM(closingTime);
-                statusTag.innerText = `المطعم مغلق (من ${openAMPM} إلى ${closeAMPM})`;
-                statusTag.style.background = "var(--main-red)"; // أحمر عند الغلق
-                
-                // إظهار رسالة للعميل فوراً
-                showAlert(`عذراً، المطعم مغلق في الوقت الحالي.\n\nأوقات العمل الرسمية:\nمن ${openAMPM} إلى ${closeAMPM}`);
+                statusTag.innerText = `مغلق (من ${openAMPM} إلى ${closeAMPM})`;
+                statusTag.className = "bg-red-500 text-white px-6 py-2 rounded-full font-bold text-sm mb-6";
             }
-
-        } catch(e) {
-            console.error(e);
-            document.getElementById('status-tag').innerText = "حدث خطأ في تحميل البيانات.";
         }
-    }
 
-    function showPage(id) {
-        document.querySelectorAll('.page-content, #home-page').forEach(p => p.style.display = 'none');
-        document.getElementById(id).style.display = id === 'home-page' ? 'flex' : 'block';
-    }
-
-    function goToHome() { showPage('home-page'); document.getElementById('footer-nav').style.display='none'; }
-    
-    function goToMenu() { 
-        if(!isRestaurantOpen()) {
-            const openAMPM = formatTimeAMPM(openingTime);
-            const closeAMPM = formatTimeAMPM(closingTime);
-            showAlert(`عذراً، لا يمكن الطلب الآن. المطعم مغلق.\n(أوقات العمل: ${openAMPM} إلى ${closeAMPM})`);
-            return;
+        function startApp() {
+            document.getElementById('splash-screen').classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-app').classList.remove('hidden');
+                
+                renderTabs();
+                if(!currentCategory) currentCategory = Object.keys(menuData)[0];
+                showCategory(currentCategory);
+            }, 500);
         }
-        showPage('menu-page'); 
-        document.getElementById('footer-nav').style.display='block';
-        renderTabs();
-        if(!currentCategory) currentCategory = Object.keys(menuData)[0];
-        showCategory(currentCategory);
-    }
 
-    function backToCurrentCategory() {
-        showPage('menu-page');
-        document.getElementById('footer-nav').style.display='block';
-        renderTabs();
-        showCategory(currentCategory);
-    }
+        // --- UI Rendering ---
 
-    function renderTabs() {
-        const tabs = document.getElementById('cat-tabs');
-        tabs.innerHTML = '';
-        Object.keys(menuData).forEach((cat) => {
-            const isActive = cat === currentCategory;
-            tabs.innerHTML += `<button class="tab ${isActive ? 'active' : ''}" onclick="showCategory('${cat}', this)">${cat}</button>`;
-        });
-        setTimeout(() => {
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }, 100);
-    }
+        function renderTabs() {
+            const tabs = document.getElementById('cat-tabs');
+            tabs.innerHTML = '';
+            
+            tabs.innerHTML += `<button class="cat-tab px-5 py-2 rounded-full border border-gray-200 dark:border-gray-700 text-sm font-bold whitespace-nowrap transition-colors bg-white dark:bg-darkCard text-gray-600 dark:text-gray-300" onclick="showCategory('all', this)">الكل</button>`;
 
-    function showCategory(cat, btn = null) {
-        currentCategory = cat; 
-        if(btn) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
+            Object.keys(menuData).forEach((cat) => {
+                tabs.innerHTML += `<button class="cat-tab px-5 py-2 rounded-full border border-gray-200 dark:border-gray-700 text-sm font-bold whitespace-nowrap transition-colors bg-white dark:bg-darkCard text-gray-600 dark:text-gray-300" onclick="showCategory('${cat}', this)">${cat}</button>`;
+            });
+
+            // Set active class on first load
+            setTimeout(() => {
+                const defaultBtn = [...document.querySelectorAll('.cat-tab')].find(b => b.innerText === currentCategory) || document.querySelectorAll('.cat-tab')[0];
+                if(defaultBtn) setActiveTab(defaultBtn);
+            }, 50);
         }
-        const list = document.getElementById('items-list');
-        list.innerHTML = '';
-        if(menuData[cat]) {
-            menuData[cat].forEach(item => {
+
+        function setActiveTab(btn) {
+            document.querySelectorAll('.cat-tab').forEach(t => {
+                t.classList.remove('bg-primary', 'text-white', 'border-primary');
+                t.classList.add('bg-white', 'dark:bg-darkCard', 'text-gray-600', 'dark:text-gray-300', 'border-gray-200', 'dark:border-gray-700');
+            });
+            if(btn) {
+                btn.classList.remove('bg-white', 'dark:bg-darkCard', 'text-gray-600', 'dark:text-gray-300', 'border-gray-200', 'dark:border-gray-700');
+                btn.classList.add('bg-primary', 'text-white', 'border-primary');
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        function showCategory(cat, btn = null) {
+            currentCategory = cat;
+            if(btn) setActiveTab(btn);
+            document.getElementById('searchInput').value = ''; // clear search
+            renderItems(cat === 'all' ? allItemsFlat : menuData[cat]);
+        }
+
+        function filterMenu() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('bg-primary', 'text-white')); // visual cue that we are searching
+            
+            let filtered = allItemsFlat.filter(i => i.name.toLowerCase().includes(query));
+            renderItems(filtered);
+        }
+
+        function renderItems(items) {
+            const list = document.getElementById('items-list');
+            const empty = document.getElementById('empty-search');
+            list.innerHTML = '';
+            
+            if(!items || items.length === 0) {
+                empty.classList.remove('hidden');
+                empty.classList.add('flex');
+                return;
+            }
+            empty.classList.add('hidden');
+            empty.classList.remove('flex');
+
+            items.forEach((item, idx) => {
                 list.innerHTML += `
-                    <div class="item-card" onclick='initOptions(${JSON.stringify(item)})'>
-                        <img src="${item.img || 'https://via.placeholder.com/110?text=Baraka'}" onerror="this.src='https://via.placeholder.com/110?text=Baraka'">
-                        <div class="item-info">
-                            <h3>${item.name}</h3>
-                            <span class="price-tag">${item.price.toFixed(3)} ر.ع</span>
+                    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-3 flex gap-3 cursor-pointer active:scale-95 transition-transform fade-in-up" style="animation-delay: ${idx * 0.03}s" onclick='initOptions(${JSON.stringify(item)})'>
+                        <img src="${item.img || 'https://via.placeholder.com/100?text=Baraka'}" onerror="this.src='https://via.placeholder.com/100?text=Baraka'" class="w-24 h-24 object-cover rounded-xl bg-gray-100 dark:bg-gray-800">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white leading-tight mb-2">${item.name}</h3>
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="font-black text-primary text-sm">${item.price.toFixed(3)} ر.ع</span>
+                                <button class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-primary flex items-center justify-center"><i class="ph ph-plus font-bold"></i></button>
+                            </div>
                         </div>
                     </div>`;
             });
         }
-    }
 
-    function initOptions(item) {
-        selectedItem = item;
-        currentOptQty = 1;
-        document.getElementById('opt-qty-val').innerText = currentOptQty;
-        showPage('options-page');
-        document.getElementById('item-title-head').innerText = item.name;
-        
-        let html = `<div class="opt-box"><h3>السعر: ${item.price.toFixed(3)} ر.ع</h3></div>`;
-        if(item.flv) html += `<div class="opt-box"><label>🌶️ اختر الطعم:</label><select id="sel-flv"><option>عادي</option><option>حار</option></select></div>`;
-        
-        if(item.name.includes("توستر") || item.name.includes("تربل توستر")) {
-            html += `<div class="opt-box" style="border-color:var(--main-yellow)">
-                <label>🧀 إضافة جبن اختياري (حتى 3 شرائح):</label>
-                <select id="sel-cheese">
-                    <option value="0">بدون إضافة</option>
-                    <option value="0.100">إضافة شريحة جبن (+0.100 ر.ع)</option>
-                    <option value="0.200">إضافة شريحتين جبن (+0.200 ر.ع)</option>
-                    <option value="0.300">إضافة 3 شرائح جبن (+0.300 ر.ع)</option>
-                </select>
-            </div>`;
-        }
+        // --- Modals & Drawers ---
 
-        if(item.d > 0) {
-            for(let i=1; i<=item.d; i++) {
-                html += `<div class="opt-box">
-                    <label>🥤 اختر المشروب الغازي ${item.d > 1 ? i : ''}:</label>
-                    <select class="sel-drink">${drinksUI}</select>
-                </div>`;
-            }
-        }
+        function initOptions(item) {
+            selectedItem = item;
+            currentOptQty = 1;
+            document.getElementById('opt-qty-val').innerText = currentOptQty;
+            document.getElementById('modal-title').innerText = item.name;
+            updateModalPrice();
+            
+            let html = ``;
+            const boxClass = `bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700`;
+            const labelClass = `block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2`;
+            const selectClass = `w-full bg-white dark:bg-darkBg border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary dark:text-white outline-none`;
 
-        if(item.s > 0) {
-            for(let i=1; i<=item.s; i++) {
-                html += `<div class="opt-box">
-                    <label>🧂 اختر الصوص ${item.s > 1 ? i : ''}:</label>
-                    <select class="sel-sauce">${saucesUI}</select>
-                </div>`;
-            }
-        }
-        
-        html += `<div class="opt-box"><label>📝 ملاحظات إضافية:</label><textarea id="sel-note" placeholder="مثلاً: بدون خس، كتشب زيادة..."></textarea></div>`;
-        document.getElementById('options-render').innerHTML = html;
-    }
-
-    function changeOptQty(change) {
-        currentOptQty += change;
-        if(currentOptQty < 1) currentOptQty = 1;
-        document.getElementById('opt-qty-val').innerText = currentOptQty;
-    }
-
-    function addItemToCart() {
-        const cheeseSelect = document.getElementById('sel-cheese');
-        const cheesePrice = cheeseSelect ? parseFloat(cheeseSelect.value) : 0;
-        const cheeseText = cheeseSelect && cheesePrice > 0 ? cheeseSelect.options[cheeseSelect.selectedIndex].text : '';
-
-        const finalItemPrice = selectedItem.price + cheesePrice;
-
-        const entry = {
-            name: selectedItem.name,
-            qty: currentOptQty,
-            unitPrice: finalItemPrice,
-            totalPrice: finalItemPrice * currentOptQty,
-            flv: document.getElementById('sel-flv')?.value || '',
-            cheeseInfo: cheeseText,
-            sauces: Array.from(document.querySelectorAll('.sel-sauce')).map(s => s.value),
-            drinks: Array.from(document.querySelectorAll('.sel-drink')).map(d => d.value),
-            note: document.getElementById('sel-note').value
-        };
-        cart.push(entry);
-        document.getElementById('c-count').innerText = cart.length;
-        backToCurrentCategory();
-    }
-
-    function goToCart() {
-        showPage('cart-page');
-        if(document.querySelector('input[name="pickup-time-type"]:checked').value === 'scheduled') {
-            generateTimeOptions();
-        }
-
-        const display = document.getElementById('cart-display');
-        display.innerHTML = '';
-        let total = 0;
-        cart.forEach((item, idx) => {
-            total += item.totalPrice;
-            display.innerHTML += `
-                <div class="opt-box" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div style="flex:1;">
-                        <strong style="font-size:1.1rem">${item.name} <span style="color:var(--main-red)">(×${item.qty})</span></strong><br>
-                        <small style="color:#666">
-                            ${item.flv ? `الطعم: ${item.flv} | ` : ''}
-                            ${item.cheeseInfo ? `<br>🧀 ${item.cheeseInfo}` : ''}
-                            ${item.sauces.length ? `<br>🧂 صوص: ${item.sauces.join('، ')}` : ''}
-                            ${item.drinks.length ? `<br>🥤 مشروب: ${item.drinks.join('، ')}` : ''}
-                            ${item.note ? `<br>📝 ملاحظة: ${item.note}` : ''}
-                        </small>
-                        <div style="font-weight:bold; margin-top:5px; color:var(--main-red)">${item.totalPrice.toFixed(3)} ر.ع</div>
+            if(item.flv) {
+                html += `<div class="${boxClass}">
+                    <label class="${labelClass}">🌶️ الطعم</label>
+                    <div class="flex gap-2">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="sel-flv" value="عادي" checked class="peer sr-only">
+                            <div class="text-center py-2 px-3 rounded-lg border border-gray-200 dark:border-gray-600 peer-checked:border-primary peer-checked:bg-red-50 dark:peer-checked:bg-red-900/20 peer-checked:text-primary transition font-bold text-sm dark:text-gray-300">عادي</div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="sel-flv" value="حار" class="peer sr-only">
+                            <div class="text-center py-2 px-3 rounded-lg border border-gray-200 dark:border-gray-600 peer-checked:border-primary peer-checked:bg-red-50 dark:peer-checked:bg-red-900/20 peer-checked:text-primary transition font-bold text-sm dark:text-gray-300">حار 🌶️</div>
+                        </label>
                     </div>
-                    <button onclick="remove(${idx})" style="color:red; border:none; background:none; font-size:1.5rem; cursor:pointer; padding:10px;">🗑️</button>
                 </div>`;
-        });
-        document.getElementById('total-val').innerText = total.toFixed(3);
-    }
+            }
+            
+            if(item.name.includes("توستر") || item.name.includes("تربل توستر")) {
+                html += `<div class="${boxClass} border-secondary">
+                    <label class="${labelClass}">🧀 إضافة جبن (اختياري)</label>
+                    <select id="sel-cheese" onchange="updateModalPrice()" class="${selectClass}">
+                        <option value="0">بدون إضافة</option>
+                        <option value="0.100">شريحة جبن (+0.100 ر.ع)</option>
+                        <option value="0.200">شريحتين جبن (+0.200 ر.ع)</option>
+                        <option value="0.300">3 شرائح جبن (+0.300 ر.ع)</option>
+                    </select>
+                </div>`;
+            }
 
-    function remove(i) { cart.splice(i, 1); goToCart(); document.getElementById('c-count').innerText = cart.length; }
+            if(item.d > 0) {
+                for(let i=1; i<=item.d; i++) {
+                    html += `<div class="${boxClass}"><label class="${labelClass}">🥤 مشروب ${item.d > 1 ? i : ''}</label><select class="sel-drink ${selectClass}">${drinksUI}</select></div>`;
+                }
+            }
 
-    function submitOrder() {
-        // حماية أخيرة قبل إرسال الطلب: التأكد أن المطعم لم يغلق أثناء تصفح العميل
-        if(!isRestaurantOpen()) {
-            const openAMPM = formatTimeAMPM(openingTime);
-            const closeAMPM = formatTimeAMPM(closingTime);
-            showAlert(`عذراً، انتهت أوقات عمل المطعم للتو.\n(أوقات العمل: ${openAMPM} إلى ${closeAMPM})\nلا يمكننا استقبال طلبك حالياً.`);
-            goToHome(); // إرجاعه للصفحة الرئيسية لإغلاق المنيو
-            return;
+            if(item.s > 0) {
+                for(let i=1; i<=item.s; i++) {
+                    html += `<div class="${boxClass}"><label class="${labelClass}">🧂 صوص ${item.s > 1 ? i : ''}</label><select class="sel-sauce ${selectClass}">${saucesUI}</select></div>`;
+                }
+            }
+            
+            html += `<div class="${boxClass}">
+                <label class="${labelClass}">📝 ملاحظات خاصة (بدون طماطم، الخ...)</label>
+                <textarea id="sel-note" rows="2" class="w-full bg-white dark:bg-darkBg border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary dark:text-white outline-none resize-none"></textarea>
+            </div>`;
+            
+            document.getElementById('options-render').innerHTML = html;
+            
+            // Open Modal
+            const modal = document.getElementById('item-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.querySelector('.drawer-overlay').classList.remove('opacity-0');
+                modal.querySelector('.drawer-content').classList.remove('translate-y-full', 'opacity-0');
+            }, 10);
         }
 
-        if(!cart.length) {
-            showAlert("سلة الطلبات فارغة، يرجى اختيار وجبات أولاً.");
-            return;
-        }
-        
-        const custName = document.getElementById('customer-name').value.trim();
-        if(!custName) {
-            showAlert("يرجى كتابة اسم العميل أولاً.");
-            document.getElementById('customer-name').focus();
-            return;
+        function closeItemModal() {
+            const modal = document.getElementById('item-modal');
+            modal.querySelector('.drawer-overlay').classList.add('opacity-0');
+            modal.querySelector('.drawer-content').classList.add('translate-y-full', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
-        const branch = document.getElementById('branch-select').value;
-        if(!branch) {
-            showAlert("يرجى اختيار فرع الاستلام أولاً (الخوض أو الخوير).");
-            document.getElementById('branch-select').focus();
-            return;
+        function changeOptQty(change) {
+            currentOptQty += change;
+            if(currentOptQty < 1) currentOptQty = 1;
+            document.getElementById('opt-qty-val').innerText = currentOptQty;
+            updateModalPrice();
         }
 
-        let finalPickupTimeText = `في أقرب وقت (خلال ${deliveryTime} دقيقة)`;
-        const timeType = document.querySelector('input[name="pickup-time-type"]:checked').value;
-        
-        if (timeType === 'scheduled') {
-            const timeVal = document.getElementById('scheduled-time-select').value;
-            if (!timeVal) {
-                showAlert("يرجى اختيار الوقت المرجو للاستلام من القائمة.");
+        function updateModalPrice() {
+            if(!selectedItem) return;
+            const cheesePrice = parseFloat(document.getElementById('sel-cheese')?.value || 0);
+            const total = (selectedItem.price + cheesePrice) * currentOptQty;
+            document.getElementById('modal-price-total').innerText = total.toFixed(3);
+        }
+
+        // --- Cart Management ---
+
+        function addItemToCart() {
+            const cheeseSelect = document.getElementById('sel-cheese');
+            const cheesePrice = cheeseSelect ? parseFloat(cheeseSelect.value) : 0;
+            const cheeseText = cheeseSelect && cheesePrice > 0 ? cheeseSelect.options[cheeseSelect.selectedIndex].text : '';
+
+            const finalItemPrice = selectedItem.price + cheesePrice;
+            const flvRadio = document.querySelector('input[name="sel-flv"]:checked');
+
+            cart.push({
+                id: Date.now(), // unique ID for removal
+                name: selectedItem.name,
+                qty: currentOptQty,
+                unitPrice: finalItemPrice,
+                totalPrice: finalItemPrice * currentOptQty,
+                flv: flvRadio ? flvRadio.value : '',
+                cheeseInfo: cheeseText,
+                sauces: Array.from(document.querySelectorAll('.sel-sauce')).map(s => s.value),
+                drinks: Array.from(document.querySelectorAll('.sel-drink')).map(d => d.value),
+                note: document.getElementById('sel-note').value,
+                img: selectedItem.img
+            });
+            
+            updateCartUI();
+            closeItemModal();
+            showToast('تم الإضافة للسلة بنجاح 😋');
+
+            // إطلاق تأثير الاحتفال (Confetti)
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.8 },
+                    colors: ['#d32f2f', '#ffc107', '#ffffff'] // ألوان متناسقة مع هوية الموقع
+                });
+            }
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+            
+            // Update FAB
+            const fab = document.getElementById('fab-cart');
+            document.getElementById('fab-count').innerText = count;
+            document.getElementById('fab-total').innerText = total.toFixed(3) + ' ر.ع';
+            
+            if(count > 0) fab.classList.remove('hidden');
+            else fab.classList.add('hidden');
+
+            // Update Drawer logic (if open)
+            renderCartItems();
+        }
+
+        function openCart() {
+            renderCartItems();
+            const modal = document.getElementById('cart-drawer');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.querySelector('.drawer-overlay').classList.remove('opacity-0');
+                modal.querySelector('.drawer-content').classList.remove('-translate-x-full', 'opacity-0');
+            }, 10);
+        }
+
+        function closeCart() {
+            const modal = document.getElementById('cart-drawer');
+            modal.querySelector('.drawer-overlay').classList.add('opacity-0');
+            modal.querySelector('.drawer-content').classList.add('-translate-x-full', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function renderCartItems() {
+            const display = document.getElementById('cart-display');
+            const form = document.getElementById('checkout-form');
+            const submitBtn = document.getElementById('btn-submit-order');
+            
+            display.innerHTML = '';
+            let total = 0;
+            
+            if(cart.length === 0) {
+                display.innerHTML = `<div class="text-center py-10 text-gray-400"><i class="ph ph-shopping-cart text-5xl mb-2 opacity-50"></i><p>السلة فارغة</p></div>`;
+                form.classList.add('hidden');
+                submitBtn.disabled = true;
+            } else {
+                form.classList.remove('hidden');
+                submitBtn.disabled = false;
+                
+                cart.forEach((item) => {
+                    total += item.totalPrice;
+                    
+                    let detailsHTML = '';
+                    if(item.flv) detailsHTML += `<span class="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-[10px]">${item.flv}</span>`;
+                    if(item.cheeseInfo) detailsHTML += `<span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 px-1.5 py-0.5 rounded text-[10px]">🧀 جبن</span>`;
+                    if(item.sauces.length) detailsHTML += `<p class="text-[11px] text-gray-500 truncate w-full mt-1">🧂 ${item.sauces.join('، ')}</p>`;
+                    if(item.drinks.length) detailsHTML += `<p class="text-[11px] text-gray-500 truncate w-full">🥤 ${item.drinks.join('، ')}</p>`;
+                    if(item.note) detailsHTML += `<p class="text-[11px] text-gray-400 italic mt-1 max-w-[180px] truncate">"${item.note}"</p>`;
+
+                    display.innerHTML += `
+                        <div class="bg-white dark:bg-darkCard p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex gap-3 relative">
+                            <button onclick="removeFromCart(${item.id})" class="absolute top-2 left-2 text-red-400 hover:text-red-600 p-1"><i class="ph ph-trash"></i></button>
+                            <img src="${item.img || 'https://via.placeholder.com/60'}" class="w-16 h-16 rounded-xl object-cover bg-gray-100">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm dark:text-white leading-tight pr-6">${item.name}</h4>
+                                <div class="flex flex-wrap gap-1 mt-1 mb-2">${detailsHTML}</div>
+                                <div class="flex justify-between items-center mt-auto">
+                                    <span class="font-bold text-primary text-sm">${item.totalPrice.toFixed(3)} ر.ع</span>
+                                    <span class="text-xs font-bold bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-lg dark:text-white">العدد: ${item.qty}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+            document.getElementById('total-val').innerText = total.toFixed(3);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCartUI();
+        }
+
+        // --- Checkout & Time ---
+
+        function generateTimeOptions() {
+            const select = document.getElementById('scheduled-time-select');
+            select.innerHTML = '';
+            
+            // ضبط التوقيت ليكون بتوقيت سلطنة عمان (مسقط)
+            const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Muscat"}));
+            const [openH, openM] = openingTime.split(':').map(Number);
+            const [closeH, closeM] = closingTime.split(':').map(Number);
+            
+            let openTotal = openH * 60 + openM;
+            let closeTotal = closeH * 60 + closeM;
+            
+            // معالجة إذا كان وقت الإغلاق بعد منتصف الليل (مثال: يفتح 10 ص ويغلق 2 ص)
+            if (closeTotal <= openTotal) {
+                closeTotal += 24 * 60;
+            }
+            
+            let currentTotal = now.getHours() * 60 + now.getMinutes();
+            
+            // إذا كنا بعد منتصف الليل وقبل وقت الإغلاق (لليوم التالي)، نضيف 24 ساعة للوقت الحالي
+            if (currentTotal < openTotal && currentTotal <= closeTotal - (24 * 60)) {
+                currentTotal += 24 * 60;
+            }
+
+            // يبدأ الوقت من وقت الفتح أو الوقت الحالي + وقت التحضير (أيهما أكبر)
+            let prepTime = parseInt(deliveryTime) || 20;
+            let startMins = Math.max(openTotal, Math.ceil((currentTotal + prepTime) / 15) * 15); 
+            
+            let count = 0;
+            for(let m = startMins; m <= closeTotal; m += 15) { 
+                if (count > 20) break; // عرض 20 خيار كحد أقصى
+                let h = Math.floor(m / 60) % 24;
+                let mm = m % 60;
+                let timeStr = formatTimeAMPM(`${h}:${mm < 10 ? '0' + mm : mm}`);
+                select.innerHTML += `<option value="${timeStr}">${timeStr}</option>`;
+                count++;
+            }
+
+            if (select.innerHTML === '') {
+                select.innerHTML = `<option value="">عذراً، قارب المطعم على الغلق أو مغلق حالياً</option>`;
+            }
+        }
+
+        function toggleTimeInput() {
+            const type = document.querySelector('input[name="pickup-time-type"]:checked').value;
+            const select = document.getElementById('scheduled-time-select');
+            if (type === 'scheduled') {
+                select.classList.remove('hidden');
+                generateTimeOptions();
+            } else {
+                select.classList.add('hidden');
+            }
+        }
+
+        function submitOrder() {
+            if(!isRestaurantOpen()) {
+                showToast(`عذراً، انتهت أوقات عمل المطعم للتو.`, 'error');
                 return;
             }
-            finalPickupTimeText = `الساعة ${timeVal} (مجدول مسبقاً)`;
-        }
 
-        const pNotes = document.getElementById('pickup-notes').value.trim();
+            const custName = document.getElementById('customer-name').value.trim();
+            const branch = document.getElementById('branch-select').value;
+            
+            if(!custName) return showToast("يرجى كتابة اسم العميل أولاً.", 'error');
+            if(!branch) return showToast("يرجى اختيار فرع الاستلام.", 'error');
 
-        const confirmMsg = `عزيزي ${custName}، سيتم إرسال طلبك الآن إلى ${branch} (استلام من الفرع). اضغط حسناً للمتابعة.`;
-        showAlert(confirmMsg);
+            let finalTime = `أقرب وقت (خلال ${deliveryTime} دقيقة)`;
+            if (document.querySelector('input[name="pickup-time-type"]:checked').value === 'scheduled') {
+                finalTime = `الساعة ${document.getElementById('scheduled-time-select').value}`;
+            }
 
-        setTimeout(() => {
+            const pNotes = document.getElementById('pickup-notes').value.trim();
+
             let text = `*طلب جديد - مطعم البركة 🍗*\n`;
-            text += `🔴 *طلب الاستلام من الفرع*\n`;
-            text += `👤 *اسم العميل: ${custName}*\n`;
-            text += `📍 فرع الاستلام: ${branch}\n`;
-            text += `⏱️ وقت الاستلام: *${finalPickupTimeText}*\n`;
-            if(pNotes) text += `🚗 *ملاحظات الاستلام: ${pNotes}*\n`;
-            text += `\n`;
+            text += `🔴 *طلب استلام من الفرع*\n`;
+            text += `👤 العميل: ${custName}\n`;
+            text += `📍 الفرع: ${branch}\n`;
+            text += `⏱️ وقت الاستلام: *${finalTime}*\n`;
+            if(pNotes) text += `🚗 ملاحظات (السيارة): ${pNotes}\n`;
+            text += `\n-- التفاصيل --\n`;
             
             cart.forEach(i => {
                 text += `▪️ *${i.name}* (العدد: ${i.qty})\n`;
-                if(i.flv) text += `    - الطعم: ${i.flv}\n`;
-                if(i.cheeseInfo) text += `    - الجبن: ${i.cheeseInfo}\n`;
-                if(i.sauces.length) text += `    - صوص: ${i.sauces.join('، ')}\n`;
-                if(i.drinks.length) text += `    - مشروب: ${i.drinks.join('، ')}\n`;
-                if(i.note) text += `    - ملاحظة: ${i.note}\n`;
-                text += `    - السعر: ${i.totalPrice.toFixed(3)} ر.ع\n\n`;
+                if(i.flv) text += `   - الطعم: ${i.flv}\n`;
+                if(i.cheeseInfo) text += `   - الجبن: ${i.cheeseInfo}\n`;
+                if(i.sauces.length) text += `   - صوص: ${i.sauces.join('، ')}\n`;
+                if(i.drinks.length) text += `   - مشروب: ${i.drinks.join('، ')}\n`;
+                if(i.note) text += `   - ملاحظة: ${i.note}\n`;
+                text += `   - السعر: ${i.totalPrice.toFixed(3)} ر.ع\n\n`;
             });
-            text += `====================\n💰 *الإجمالي النهائي: ${document.getElementById('total-val').innerText} ر.ع*\n====================`;
+            text += `====================\n💰 *الإجمالي: ${document.getElementById('total-val').innerText} ر.ع*\n====================`;
             
-            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`);
-        }, 1500);
-    }
+            showToast('جاري تحويلك للواتساب لإتمام الطلب... 🚀');
+            setTimeout(() => {
+                window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`);
+            }, 1000);
+        }
 
-    fetchMenuData();
-</script>
+        // Init
+        fetchMenuData();
+    </script>
 </body>
 </html>
